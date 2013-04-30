@@ -49,10 +49,10 @@ namespace CloudFormation.Actions
             this.Controls.Add(
                 new FormFieldGroup("Stack Options", "Stack Options", false,
                     new StandardFormField("Stack Name", txtStackName)
-                )//,
-                //new FormFieldGroup("Deploy", "Deploy Options", false,
-                //    new StandardFormField("Wait Until Complete", chkWaitUntilComplete)
-                //)
+                ),
+                new FormFieldGroup("Deploy", "Deploy Options", false,
+                    new StandardFormField("Wait Until Complete", chkWaitUntilComplete)
+                )
             );
         }
     }
