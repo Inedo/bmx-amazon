@@ -4,14 +4,15 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 
-using Inedo.BuildMaster;
-using Inedo.BuildMaster.Extensibility.Actions;
-using Inedo.BuildMaster.Web;
 using Amazon;
 using Amazon.CloudFormation;
 using Amazon.CloudFormation.Model;
+using Inedo.BuildMaster;
+using Inedo.BuildMaster.Extensibility.Actions;
+using Inedo.BuildMaster.Web;
+using Amazon.CloudFormation.Model;
 
-namespace CloudFormation.Actions
+namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
     public abstract class CloudFormationAction : RemoteActionBase, ICloudFormationAction 
     {
@@ -167,7 +168,7 @@ namespace CloudFormation.Actions
         internal void WaitForStack(string StackName, string StackID, string StatusToWaitOn, string SuccessStatus)
         {
             LogInformation("CloudFormation waiting for stack {0} ({1}) to get out of {2} status.", StackName, StackID, StatusToWaitOn);
-            var req = new Amazon.CloudFormation.Model.DescribeStacksRequest().WithStackName(StackName);
+            var req = new DescribeStacksRequest().WithStackName(StackName);
             var resp = client.DescribeStacks(req);
             if (resp.DescribeStacksResult.Stacks.Count < 1)
             {

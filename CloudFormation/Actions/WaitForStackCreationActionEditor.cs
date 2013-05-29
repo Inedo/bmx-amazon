@@ -2,7 +2,7 @@
 using Inedo.BuildMaster.Web.Controls;
 using Inedo.Web.Controls;
 
-namespace CloudFormation.Actions
+namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
     public class WaitForStackCreationActionEditor : CloudFormationActionEditor
     {

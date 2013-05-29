@@ -8,8 +8,9 @@ using Inedo.BuildMaster.Web.Controls;
 using Inedo.BuildMaster.Web.Controls.Extensions;
 using Inedo.Web.Controls;
 using System.Linq.Expressions;
+using Amazon;
 
-namespace CloudFormation
+namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
     public abstract class CloudFormationActionEditor : ActionEditorBase
     {
@@ -37,7 +38,7 @@ namespace CloudFormation
             txtSecretKey = new ValidatingTextBox { Width = 400 };
             chkEncryptKeys = new CheckBox { Width = 400 };
             ddlRegion = new DropDownList { Width = 400 };
-            ddlRegion.Items.AddRange((from r in Amazon.RegionEndpoint.EnumerableAllRegions select new ListItem { Text = r.DisplayName, Value = r.SystemName }).ToArray());
+            ddlRegion.Items.AddRange((from r in RegionEndpoint.EnumerableAllRegions select new ListItem { Text = r.DisplayName, Value = r.SystemName }).ToArray());
             this.Controls.Add(
                 new FormFieldGroup("Credentials", "AWS Service Credentials", false,
                     new StandardFormField("Access Key", txtAccessKey),

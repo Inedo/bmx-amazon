@@ -8,7 +8,7 @@
     <ProjectGuid>{047FFE9E-F6D0-4747-9D16-B5A1447C999D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Inedo.BuildMasterExtensions.Amazon</RootNamespace>
+    <RootNamespace>Inedo.BuildMasterExtensions</RootNamespace>
     <AssemblyName>Amazon</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -76,7 +76,9 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="CloudFormation\Actions\WaitForStackCreationAction.cs" />
-    <Compile Include="CloudFormation\Actions\WaitForStackCreationActionEditor.cs" />
+    <Compile Include="CloudFormation\Actions\WaitForStackCreationActionEditor.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="CloudFormation\CloudFormationAction.cs" />
     <Compile Include="CloudFormation\CloudFormationActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -106,8 +108,8 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if exist $(SolutionDir) cmd /c "del $(SolutionDir)..\..\BuildMaster\ExtensionLib\$(TargetName).bmx"
-if exist $(SolutionDir) $(SolutionDir)..\zip -j $(SolutionDir)..\..\BuildMaster\ExtensionLib\$(TargetName).bmx *.dll</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

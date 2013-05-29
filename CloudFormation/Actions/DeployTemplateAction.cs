@@ -7,7 +7,7 @@ using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
 
-namespace CloudFormation.Actions
+namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
     [ActionProperties(
         "Deploy CloudFormation Template",

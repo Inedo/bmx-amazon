@@ -6,7 +6,7 @@ using Inedo.Web.Controls;
 using System.Linq.Expressions;
 using System.Linq;
 
-namespace CloudFormation.Actions
+namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
     public sealed class DeployTemplateActionEditor : CloudFormationActionEditor
     {

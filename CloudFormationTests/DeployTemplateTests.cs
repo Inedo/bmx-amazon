@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using MbUnit.Framework;
 
-using CloudFormation.Actions;
+using Inedo.BuildMasterExtensions.Amazon.CloudFormation;
 
 namespace CloudFormationTests
 {

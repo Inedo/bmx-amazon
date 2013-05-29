@@ -7,8 +7,10 @@ using System.ComponentModel;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
+using Amazon;
+using Amazon.CloudFormation.Model;
 
-namespace CloudFormation.Actions
+namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
     [ActionProperties(
         "Delete CloudFormation Stack",
@@ -36,7 +38,7 @@ namespace CloudFormation.Actions
             if (InitClient())
             {
                 LogInformation("CloudFormation delete stack {0}", StackName);
-                client.DeleteStack(new Amazon.CloudFormation.Model.DeleteStackRequest { StackName = StackName });
+                client.DeleteStack(new DeleteStackRequest { StackName = StackName });
                 if (WaitUntilComplete)
                     WaitForStack(StackName, "N/A", CloudFormationAction.DELETE_IN_PROGRESS, CloudFormationAction.DELETE_COMPLETE);
             }

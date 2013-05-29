@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CloudFormation
+namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
     public interface ICloudFormationAction
     {
