@@ -119,12 +119,13 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
         /// </returns>
         public override bool IsConfigurerSettingRequired()
         {
-            var configurer = Util.Actions.GetConfigurer<CreateEC2InstanceAction>() as AmazonConfigurer;
+            return false;
+            //var configurer = Util.Actions.GetConfigurer<CreateEC2InstanceAction>() as AmazonConfigurer;
 
-            if (configurer != null)
-                return string.IsNullOrEmpty(configurer.AccessKeyId) || string.IsNullOrEmpty(configurer.SecretAccessKey);
-            else
-                return true;
+            //if (configurer != null)
+            //    return string.IsNullOrEmpty(configurer.AccessKeyId) || string.IsNullOrEmpty(configurer.SecretAccessKey);
+            //else
+            //    return true;
         }
     }
 }

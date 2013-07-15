@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
-
+using System.Linq;
 using Amazon;
 using Amazon.CloudFormation;
 using Amazon.CloudFormation.Model;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
-using Inedo.BuildMaster.Web;
-using Amazon.CloudFormation.Model;
 
 namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
-    public abstract class CloudFormationAction : RemoteActionBase, ICloudFormationAction 
+    public abstract class CloudFormationAction : AgentBasedActionBase, ICloudFormationAction 
     {
         public enum FailureAction
         {

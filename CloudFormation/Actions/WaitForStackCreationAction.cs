@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;

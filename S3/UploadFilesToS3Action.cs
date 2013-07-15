@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Files;
 using Inedo.BuildMaster.Web;
-using Inedo.Linq;
 
 namespace Inedo.BuildMasterExtensions.Amazon.S3
 {
@@ -98,14 +98,14 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
             var entryResults = Util.Files.GetDirectoryEntry(
                 new GetDirectoryEntryCommand
                 {
-                    Path = this.RemoteConfiguration.SourceDirectory,
+                    Path = this.Context.SourceDirectory,
                     IncludeRootPath = true,
                     Recurse = this.Recursive
                 }
             );
 
             var matches = Util.Files.Comparison.GetMatches(
-                this.RemoteConfiguration.SourceDirectory,
+                this.Context.SourceDirectory,
                 entryResults.Entry,
                 this.FileMasks
             ).Where(s => s is FileEntryInfo).ToList();
@@ -142,7 +142,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
 
                 foreach (var fileInfo in matches)
                 {
-                    var keyName = prefix + fileInfo.Path.Substring(this.RemoteConfiguration.SourceDirectory.Length).Replace(Path.DirectorySeparatorChar, '/').Trim('/');
+                    var keyName = prefix + fileInfo.Path.Substring(this.Context.SourceDirectory.Length).Replace(Path.DirectorySeparatorChar, '/').Trim('/');
                     this.LogInformation("Transferring {0} to {1}...", fileInfo.Path, keyName);
                     try
                     {
