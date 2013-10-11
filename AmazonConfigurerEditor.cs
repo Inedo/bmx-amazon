@@ -1,4 +1,5 @@
-﻿using Inedo.BuildMaster.Extensibility.Configurers.Extension;
+﻿using System.Web.UI.WebControls;
+using Inedo.BuildMaster.Extensibility.Configurers.Extension;
 using Inedo.BuildMaster.Web.Controls;
 using Inedo.BuildMaster.Web.Controls.Extensions;
 using Inedo.Web.Controls;
@@ -12,7 +13,7 @@ namespace Inedo.BuildMasterExtensions.Amazon
     {
         private ValidatingTextBox txtKeyId;
         private ValidatingTextBox txtSecretKey;
-        private NumericTextBox txtPartSize;
+        private ValidatingTextBox txtPartSize;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AmazonConfigurerEditor"/> class.
@@ -27,9 +28,9 @@ namespace Inedo.BuildMasterExtensions.Amazon
 
             this.txtKeyId = new ValidatingTextBox { Required = true, Width = 300 };
             this.txtSecretKey = new PasswordTextBox { Required = true, Width = 250 };
-            this.txtPartSize = new NumericTextBox { MinValue = 5, MaxValue = 20 };
+            this.txtPartSize = new ValidatingTextBox { Type = ValidationDataType.Integer };
 
-            CUtil.Add(this,
+            this.Controls.Add(
                 new FormFieldGroup(
                     "Credentials",
                     "Specifies the credentials used to authenticate with Amazon Web Services. " +
@@ -75,7 +76,7 @@ namespace Inedo.BuildMasterExtensions.Amazon
             {
                 AccessKeyId = this.txtKeyId.Text,
                 SecretAccessKey = this.txtSecretKey.Text,
-                S3PartSize = (int)this.txtPartSize.Value
+                S3PartSize = int.Parse(this.txtPartSize.Text)
             };
         }
         /// <summary>
@@ -86,7 +87,7 @@ namespace Inedo.BuildMasterExtensions.Amazon
         /// </remarks>
         public override void InitializeDefaultValues()
         {
-            BindToForm(new AmazonConfigurer());
+            this.BindToForm(new AmazonConfigurer());
         }
     }
 }

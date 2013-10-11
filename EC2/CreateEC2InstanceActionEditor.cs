@@ -83,7 +83,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
             if (!string.IsNullOrEmpty(this.txtIPAddress.Text) && !System.Net.IPAddress.TryParse(this.txtIPAddress.Text, out address))
             {
                 e.Message = "IP address is not valid.";
-                e.ValidLevel = ValidationLevels.Error;
+                e.ValidLevel = ValidationLevel.Error;
             }
         }
     }

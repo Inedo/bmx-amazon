@@ -1,13 +1,9 @@
 packages/*
-
 bin
-
+bin/*
+obj/*
 obj
-
 *.suo
-
 *.user
-
 *.vspscc
-
 */_sgbak/*
