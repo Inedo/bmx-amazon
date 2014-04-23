@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amazon", "Amazon.csproj", "{047FFE9E-F6D0-4747-9D16-B5A1447C999D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudFormationTests", "CloudFormationTests\CloudFormationTests.csproj", "{3CC1BF33-D259-489B-A678-79FC2EBF2E45}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,10 +13,6 @@ Global
 		{047FFE9E-F6D0-4747-9D16-B5A1447C999D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{047FFE9E-F6D0-4747-9D16-B5A1447C999D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{047FFE9E-F6D0-4747-9D16-B5A1447C999D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3CC1BF33-D259-489B-A678-79FC2EBF2E45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3CC1BF33-D259-489B-A678-79FC2EBF2E45}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3CC1BF33-D259-489B-A678-79FC2EBF2E45}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3CC1BF33-D259-489B-A678-79FC2EBF2E45}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
