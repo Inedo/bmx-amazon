@@ -40,6 +40,7 @@ namespace Inedo.BuildMasterExtensions.Amazon
             var cfg = (AmazonConfigurer)extension;
             this.txtKeyId.Text = cfg.AccessKeyId;
             this.txtSecretKey.Text = cfg.SecretAccessKey;
+            this.txtPartSize.Text = cfg.S3PartSize.ToString();
             this.ddlRegionEndpoint.SelectedValue = cfg.RegionEndpoint;
         }
         public override ExtensionConfigurerBase CreateFromForm()
