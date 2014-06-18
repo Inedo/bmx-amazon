@@ -119,7 +119,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
             return null;
         }
 
-        internal AmazonCloudFormation client;
+        internal IAmazonCloudFormation client;
 
         internal bool InitClient()
         {
@@ -152,7 +152,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
                 else
                     req.TemplateURL = BucketName;
                 var result = client.CreateStack(req);
-                return result.CreateStackResult.StackId;
+                return result.StackId;
             }
             catch (Exception ex)
             {
@@ -164,27 +164,28 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
         internal void WaitForStack(string StackName, string StackID, string StatusToWaitOn, string SuccessStatus)
         {
             LogInformation("CloudFormation waiting for stack {0} ({1}) to get out of {2} status.", StackName, StackID, StatusToWaitOn);
-            var req = new DescribeStacksRequest().WithStackName(StackName);
+            var req = new DescribeStacksRequest();
+            req.StackName = StackName;
             var resp = client.DescribeStacks(req);
-            if (resp.DescribeStacksResult.Stacks.Count < 1)
+            if (resp.Stacks.Count < 1)
             {
                 LogError("CloudFormation error in WaitForStack: No stacks in DescribeStacks");
                 return;
             }
-            while (resp.DescribeStacksResult.Stacks[0].StackStatus == StatusToWaitOn)
+            while (resp.Stacks[0].StackStatus == StatusToWaitOn)
             {
                 System.Threading.Thread.Sleep(20000);
                 resp = client.DescribeStacks(req);
-                if (resp.DescribeStacksResult.Stacks.Count < 1)
+                if (resp.Stacks.Count < 1)
                 {
                     LogError("CloudFormation error in WaitForStack: No stacks in DescribeStacks");
                     return;
                 }
             }
-            if (SuccessStatus == resp.DescribeStacksResult.Stacks[0].StackStatus)
-                LogInformation("CloudFormation stack {0} ({1}) completed successfully. Output: {2}", StackName, StackID, resp.DescribeStacksResult.Stacks[0].Outputs.AsString());
+            if (SuccessStatus == resp.Stacks[0].StackStatus)
+                LogInformation("CloudFormation stack {0} ({1}) completed successfully. Output: {2}", StackName, StackID, resp.Stacks[0].Outputs.AsString());
             else
-                LogError("CloudFormation stack {0} ({1}) failed with status: {2}. Output: {3}", StackName, StackID, resp.DescribeStacksResult.Stacks[0].StackStatus, resp.DescribeStacksResult.Stacks[0].Outputs.AsString());
+                LogError("CloudFormation stack {0} ({1}) failed with status: {2}. Output: {3}", StackName, StackID, resp.Stacks[0].StackStatus, resp.Stacks[0].Outputs.AsString());
         }
 
         

@@ -1,6 +1,7 @@
-﻿using System.Web.UI.WebControls;
+﻿using System.Linq;
+using System.Web.UI.WebControls;
+using Amazon;
 using Inedo.BuildMaster.Extensibility.Configurers.Extension;
-using Inedo.BuildMaster.Web.Controls;
 using Inedo.BuildMaster.Web.Controls.Extensions;
 using Inedo.Web.Controls;
 
@@ -14,49 +15,21 @@ namespace Inedo.BuildMasterExtensions.Amazon
         private ValidatingTextBox txtKeyId;
         private ValidatingTextBox txtSecretKey;
         private ValidatingTextBox txtPartSize;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AmazonConfigurerEditor"/> class.
-        /// </summary>
-        public AmazonConfigurerEditor()
-        {
-        }
+        private DropDownList ddlRegionEndpoint;
 
         protected override void CreateChildControls()
         {
-            base.CreateChildControls();
-
             this.txtKeyId = new ValidatingTextBox { Required = true, Width = 300 };
             this.txtSecretKey = new PasswordTextBox { Required = true, Width = 250 };
-            this.txtPartSize = new ValidatingTextBox { Type = ValidationDataType.Integer };
+            this.txtPartSize = new ValidatingTextBox { Type = ValidationDataType.Integer, Text = "5" };
+            this.ddlRegionEndpoint = new DropDownList { ID = "ddlRegionEndpoint" };
+            this.ddlRegionEndpoint.Items.AddRange(RegionEndpoint.EnumerableAllRegions.Select(r => new ListItem(r.DisplayName, r.SystemName)));
 
             this.Controls.Add(
-                new FormFieldGroup(
-                    "Credentials",
-                    "Specifies the credentials used to authenticate with Amazon Web Services. " +
-                    "For more information about EC2 security credentials, visit " +
-                    "<a href=\"http://docs.amazonwebservices.com/AWSSecurityCredentials/1.0/AboutAWSCredentials.html\" target=\"_blank\">" +
-                    "Amazon's documentation</a>.",
-                    false,
-                    new StandardFormField(
-                        "Access Key ID:",
-                        this.txtKeyId
-                    ),
-                    new StandardFormField(
-                        "Secret Access Key:",
-                        this.txtSecretKey
-                    )
-                ),
-                new FormFieldGroup(
-                    "S3 Part Size",
-                    "Files larger than the value specified here will be split into multiple parts and " +
-                    "uploaded using a multipart transfer.",
-                    true,
-                    new StandardFormField(
-                        "Part Size (MB):",
-                        this.txtPartSize
-                    )
-                )
+                new SlimFormField("Access key ID:", this.txtKeyId),
+                new SlimFormField("Secret access key:", this.txtSecretKey),
+                new SlimFormField("S3 part size:", this.txtPartSize),
+                new SlimFormField("Endpoint:", this.ddlRegionEndpoint)
             );
         }
 
@@ -67,6 +40,7 @@ namespace Inedo.BuildMasterExtensions.Amazon
             var cfg = (AmazonConfigurer)extension;
             this.txtKeyId.Text = cfg.AccessKeyId;
             this.txtSecretKey.Text = cfg.SecretAccessKey;
+            this.ddlRegionEndpoint.SelectedValue = cfg.RegionEndpoint;
         }
         public override ExtensionConfigurerBase CreateFromForm()
         {
@@ -76,7 +50,8 @@ namespace Inedo.BuildMasterExtensions.Amazon
             {
                 AccessKeyId = this.txtKeyId.Text,
                 SecretAccessKey = this.txtSecretKey.Text,
-                S3PartSize = int.Parse(this.txtPartSize.Text)
+                S3PartSize = int.Parse(this.txtPartSize.Text),
+                RegionEndpoint = this.ddlRegionEndpoint.SelectedValue
             };
         }
         /// <summary>

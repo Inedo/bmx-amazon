@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Web.UI.WebControls;
 using Inedo.BuildMaster.Extensibility.Actions;
-using Inedo.BuildMaster.Web.Controls;
 using Inedo.BuildMaster.Web.Controls.Extensions;
 using Inedo.Web.Controls;
+using Inedo.Web.Controls.SimpleHtml;
 
 namespace Inedo.BuildMasterExtensions.Amazon.S3
 {
-    /// <summary>
-    /// Custom editor for the <see cref="UploadFilesToS3Action"/> class.
-    /// </summary>
     internal sealed class UploadFilesToS3ActionEditor : ActionEditorBase
     {
         private TextBox txtFileMasks;
@@ -20,16 +17,17 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
         private CheckBox chkEncrypted;
         private CheckBox chkRecursive;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UploadFilesToS3ActionEditor"/> class.
-        /// </summary>
-        public UploadFilesToS3ActionEditor()
-        {
-        }
-
         public override bool DisplaySourceDirectory
         {
             get { return true; }
+        }
+        public override string ServerLabel
+        {
+            get { return "From:"; }
+        }
+        public override string SourceDirectoryLabel
+        {
+            get { return "In:"; }
         }
 
         public override void BindToForm(ActionBase extension)
@@ -63,86 +61,48 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
 
         protected override void CreateChildControls()
         {
-            base.CreateChildControls();
-
-            this.txtFileMasks = new TextBox
+            this.txtFileMasks = new ValidatingTextBox
             {
-                Width = 300,
                 TextMode = TextBoxMode.MultiLine,
                 Rows = 5
             };
 
-            this.txtPrefix = new TextBox { Width = 300 };
+            this.txtPrefix = new ValidatingTextBox();
 
             this.txtBucket = new ValidatingTextBox
             {
-                Width = 300,
                 Required = true
             };
 
             this.chkReducedRedundancy = new CheckBox
             {
-                Text = "Reduced Redundancy"
+                Text = "Reduced redundancy"
             };
 
             this.chkPublic = new CheckBox
             {
-                Text = "Make Public"
+                Text = "Make public"
             };
 
             this.chkEncrypted = new CheckBox
             {
-                Text = "Server-Side Encryption"
+                Text = "Server-side encryption"
             };
 
             this.chkRecursive = new CheckBox
             {
-                Text = "Recursively upload files from subdirectories"
+                Text = "Also match files in subdirectories"
             };
 
-            CUtil.Add(this,
-                new FormFieldGroup(
-                    "File Masks",
-                    "Files in the source directory that match a mask entered here will (one per line) be uploaded.",
-                    false,
-                    new StandardFormField(
-                        "File Masks:",
-                        this.txtFileMasks
-                    ),
-                    new StandardFormField(
-                        string.Empty,
-                        this.chkRecursive
-                    )
-                ),
-                new FormFieldGroup(
-                    "Bucket",
-                    "Specify the name of the S3 bucket to upload files to, and optionally provide a target folder inside the bucket.",
-                    false,
-                    new StandardFormField(
-                        "Bucket Name:",
-                        this.txtBucket
-                    ),
-                    new StandardFormField(
-                        "Folder Name:",
-                        this.txtPrefix
-                    )
-                ),
-                new FormFieldGroup(
+            this.Controls.Add(
+                new SlimFormField("Matching files:", new Div(this.txtFileMasks), new Div(this.chkRecursive)),
+                new SlimFormField("To bucket:", this.txtBucket),
+                new SlimFormField("To folder:", this.txtPrefix),
+                new SlimFormField(
                     "Options",
-                    "Use these options to configure storage options and accessibility of the uploaded files.",
-                    true,
-                    new StandardFormField(
-                        string.Empty,
-                        this.chkPublic
-                    ),
-                    new StandardFormField(
-                        string.Empty,
-                        this.chkReducedRedundancy
-                    ),
-                    new StandardFormField(
-                        string.Empty,
-                        this.chkEncrypted
-                    )
+                    new Div(this.chkPublic),
+                    new Div(this.chkReducedRedundancy),
+                    new Div(this.chkEncrypted)
                 )
             );
         }

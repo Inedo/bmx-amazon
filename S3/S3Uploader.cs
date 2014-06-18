@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
 
@@ -35,22 +36,26 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
             get { return this.Encrypted ? ServerSideEncryptionMethod.AES256 : ServerSideEncryptionMethod.None; }
         }
 
-        public void UploadFile(string fileName, string keyName)
+        public void UploadFile(string fileName, string keyName, Action<S3UploadProgress> reportProgress = null)
         {
             long fileSize = new FileInfo(fileName).Length;
             var parts = this.GetParts(fileSize);
             if (parts == null)
             {
+                EventHandler<StreamTransferProgressArgs> handleStreamProgress = null;
+                if (reportProgress != null)
+                    handleStreamProgress = (s, e) => reportProgress(new S3UploadProgress(e.PercentDone));
+
                 this.s3.PutObject(
                     new PutObjectRequest
                     {
                         BucketName = this.BucketName,
                         Key = keyName,
                         StorageClass = this.StorageClass,
-                        GenerateMD5Digest = true,
                         FilePath = fileName,
                         CannedACL = this.CannedACL,
-                        ServerSideEncryptionMethod = this.EncryptionMethod
+                        ServerSideEncryptionMethod = this.EncryptionMethod,
+                        StreamTransferProgress = handleStreamProgress
                     }
                 );
             }
@@ -70,6 +75,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
                 try
                 {
                     var completedParts = new List<PartETag>(parts.Count);
+                    int lastPercent = 0;
                     for (int i = 0; i < parts.Count; i++)
                     {
                         var partResponse = this.s3.UploadPart(
@@ -79,13 +85,23 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
                                 Key = keyName,
                                 FilePath = fileName,
                                 UploadId = uploadResponse.UploadId,
-                                GenerateMD5Digest = true,
                                 PartSize = parts[i].Length,
                                 FilePosition = parts[i].StartOffset,
                                 PartNumber = i + 1
                             }
                         );
+
                         completedParts.Add(new PartETag(i + 1, partResponse.ETag));
+
+                        if (reportProgress != null)
+                        {
+                            int percent = (int)(((double)(i + 1) / (double)parts.Count) * 100.0);
+                            if (percent != lastPercent)
+                            {
+                                reportProgress(new S3UploadProgress(percent));
+                                lastPercent = percent;
+                            }
+                        }
                     }
 
                     this.s3.CompleteMultipartUpload(
@@ -98,7 +114,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
                         }
                     );
                 }
-                catch (Exception)
+                catch
                 {
                     this.s3.AbortMultipartUpload(
                         new AbortMultipartUploadRequest
@@ -108,6 +124,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
                             UploadId = uploadResponse.UploadId
                         }
                     );
+
                     throw;
                 }
             }

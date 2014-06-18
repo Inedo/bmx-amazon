@@ -6,13 +6,10 @@ using Inedo.BuildMaster.Web;
 
 namespace Inedo.BuildMasterExtensions.Amazon.EC2
 {
-    /// <summary>
-    /// Represents an action that creates a new instance on the Amazon EC2 cloud.
-    /// </summary>
     [ActionProperties(
         "Terminate Amazon EC2 Instance",
-        "Terminates an Amazon EC2 instance at the specified IP Address.",
-        "Amazon")]
+        "Terminates an Amazon EC2 instance at the specified IP Address.")]
+    [Tag("amazon"), Tag("cloud")]
     [CustomEditor(typeof(TerminateEC2InstanceActionEditor))]
     public sealed class TerminateEC2InstanceAction : RemoteActionBase
     {
@@ -67,16 +64,16 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
 
                 var addrResult = ec2.DescribeAddresses(new global::Amazon.EC2.Model.DescribeAddressesRequest()
                 {
-                    PublicIp = new List<string>()
+                    PublicIps = new List<string>()
                     {
                         instanceId
                     }
                 });
 
-                if (!addrResult.IsSetDescribeAddressesResult() || !addrResult.DescribeAddressesResult.IsSetAddress() || addrResult.DescribeAddressesResult.Address.Count == 0)
+                if (addrResult.Addresses.Count == 0)
                     throw new InvalidOperationException(string.Format("IP address {0} is not associated with an instance.", instanceId));
 
-                var addressInfo = addrResult.DescribeAddressesResult.Address[0];
+                var addressInfo = addrResult.Addresses[0];
                 instanceId = addressInfo.InstanceId;
 
                 LogInformation("Disassociating IP address");
@@ -87,13 +84,13 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
 
             var response = ec2.TerminateInstances(new global::Amazon.EC2.Model.TerminateInstancesRequest()
             {
-                InstanceId = new List<string>()
+                InstanceIds = new List<string>()
                 {
                     instanceId
                 }
             });
 
-            if (response.IsSetTerminateInstancesResult() && response.TerminateInstancesResult.IsSetTerminatingInstance() && response.TerminateInstancesResult.TerminatingInstance.Count > 0)
+            if (response.TerminatingInstances.Count > 0)
                 LogInformation(string.Format("Instance {0} has been terminated.", instanceId));
             else
                 LogWarning(string.Format("Instance {0} could not be terminated.", instanceId));

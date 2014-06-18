@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
-using Inedo.BuildMaster;
 
 namespace Inedo.BuildMasterExtensions.Amazon.EC2
 {
-    /// <summary>
-    /// Represents an action that creates a new instance on the Amazon EC2 cloud
-    /// </summary>
     [ActionProperties(
         "Create Amazon EC2 Instance",
-        "Launches an Amazon EC2 instance using the specified AMI.",
-        "Amazon")]
+        "Launches an Amazon EC2 instance using the specified AMI.")]
     [CustomEditor(typeof(CreateEC2InstanceActionEditor))]
+    [Tag("amazon"), Tag("cloud")]
     public sealed class CreateEC2InstanceAction : RemoteActionBase
     {
         /// <summary>
@@ -77,7 +72,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
                 MaxCount = 1
             });
 
-            var instanceId = response.RunInstancesResult.Reservation.RunningInstance[0].InstanceId;
+            var instanceId = response.Reservation.Instances[0].InstanceId;
 
             LogInformation(string.Format("Instance created (ID: {0})", instanceId));
 

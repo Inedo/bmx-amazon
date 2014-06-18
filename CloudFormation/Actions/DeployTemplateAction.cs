@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Text;
 using System.ComponentModel;
 using System.Linq;
-
+using System.Text;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
@@ -11,9 +10,9 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
     [ActionProperties(
         "Deploy CloudFormation Template",
-        "An action that deploys an Amazon CloudFormation template.",
-        "Amazon")]
+        "An action that deploys an Amazon CloudFormation template.")]
     [CustomEditor(typeof(DeployTemplateActionEditor))]
+    [Tag("amazon"), Tag("cloud")]
     public sealed class DeployTemplateAction : CloudFormationAction 
     {
         [Persistent]

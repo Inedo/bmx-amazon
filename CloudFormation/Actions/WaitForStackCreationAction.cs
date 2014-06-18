@@ -7,9 +7,9 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
     [ActionProperties(
         "Wait For CloudFormation Stack Creation",
-        "An action that waits for an Amazon CloudFormation stack to complete.",
-        "Amazon")]
+        "An action that waits for an Amazon CloudFormation stack to complete.")]
     [CustomEditor(typeof(WaitForStackCreationActionEditor))]
+    [Tag("amazon"), Tag("cloud")]
     public class WaitForStackCreationAction : CloudFormationAction 
     {
         [Persistent]

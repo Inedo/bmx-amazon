@@ -10,14 +10,11 @@ using Inedo.BuildMaster.Web;
 
 namespace Inedo.BuildMasterExtensions.Amazon.S3
 {
-    /// <summary>
-    /// Action for transferring files to an Amazon S3 Bucket.
-    /// </summary>
     [ActionProperties(
         "Upload Files to S3",
-        "Transfers files to an Amazon S3 bucket.",
-        "Amazon")]
+        "Transfers files to an Amazon S3 bucket.")]
     [CustomEditor(typeof(UploadFilesToS3ActionEditor))]
+    [Tag("amazon"), Tag("cloud")]
     public sealed class UploadFilesToS3Action : RemoteActionBase
     {
         /// <summary>
@@ -63,19 +60,20 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
         [Persistent]
         public bool Recursive { get; set; }
 
-        /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
-        public override string ToString()
+        public override ActionDescription GetActionDescription()
         {
-            return string.Format(
-                "Upload files matching ({0}) from {1} to {2}",
-                this.FileMasks != null ? string.Join(", ", this.FileMasks) : string.Empty,
-                string.IsNullOrEmpty(this.OverriddenSourceDirectory) ? "(default)" : this.OverriddenSourceDirectory,
-                this.BucketName + Util.ConcatNE("/", this.KeyPrefix)
+            return new ActionDescription(
+                new ShortActionDescription(
+                    "Upload ",
+                    new ListHilite(this.FileMasks),
+                    " to S3"
+                ),
+                new LongActionDescription(
+                    "from ",
+                    new DirectoryHilite(this.OverriddenSourceDirectory),
+                    " to ",
+                    new Hilite(this.BucketName + Util.ConcatNE("/", this.KeyPrefix))
+                )
             );
         }
 
@@ -130,7 +128,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
             if (!string.IsNullOrEmpty(this.KeyPrefix))
                 prefix = this.KeyPrefix.Trim('/') + "/";
 
-            using (var s3 = new AmazonS3Client(cfg.AccessKeyId, cfg.SecretAccessKey))
+            using (var s3 = new AmazonS3Client(cfg.AccessKeyId, cfg.SecretAccessKey, global::Amazon.RegionEndpoint.GetBySystemName(cfg.RegionEndpoint)))
             {
                 var uploader = new S3Uploader(
                     s3,
@@ -146,7 +144,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
                     this.LogInformation("Transferring {0} to {1}...", fileInfo.Path, keyName);
                     try
                     {
-                        uploader.UploadFile(fileInfo.Path, keyName);
+                        uploader.UploadFile(fileInfo.Path, keyName, p => this.LogDebug("{0}% transferred.", p.Percent));
                         this.LogDebug("Upload complete!");
                     }
                     catch (Exception ex)

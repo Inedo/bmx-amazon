@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel;
-
+﻿using System.ComponentModel;
+using Amazon.CloudFormation.Model;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
-using Amazon;
-using Amazon.CloudFormation.Model;
 
 namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
     [ActionProperties(
         "Delete CloudFormation Stack",
-        "An action that deletes an Amazon CloudFormation stack.",
-        "Amazon")]
+        "An action that deletes an Amazon CloudFormation stack.")]
     [CustomEditor(typeof(DeleteStackActionEditor))]
+    [Tag("amazon"), Tag("cloud")]
     public class DeleteStackAction : CloudFormationAction 
     {
         [Persistent]

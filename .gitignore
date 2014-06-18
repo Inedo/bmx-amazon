@@ -1,9 +1,10 @@
 packages/*
 bin
-bin/*
-obj/*
+*/bin/*
+*/obj/*
 obj
 *.suo
+
 *.user
 *.vspscc
 */_sgbak/*

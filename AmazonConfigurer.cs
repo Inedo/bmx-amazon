@@ -18,6 +18,7 @@ namespace Inedo.BuildMasterExtensions.Amazon
         public AmazonConfigurer()
         {
             this.S3PartSize = 5;
+            this.RegionEndpoint = global::Amazon.RegionEndpoint.USWest1.SystemName;
         }
 
         /// <summary>
@@ -35,6 +36,11 @@ namespace Inedo.BuildMasterExtensions.Amazon
         /// </summary>
         [Persistent]
         public int S3PartSize { get; set; }
+        /// <summary>
+        /// Gets or sets the region endpoint.
+        /// </summary>
+        [Persistent]
+        public string RegionEndpoint { get; set; }
 
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
