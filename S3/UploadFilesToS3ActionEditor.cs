@@ -32,8 +32,6 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
 
         public override void BindToForm(ActionBase extension)
         {
-            this.EnsureChildControls();
-
             var upload = (UploadFilesToS3Action)extension;
             this.txtFileMasks.Text = string.Join(Environment.NewLine, upload.FileMasks ?? new string[0]);
             this.txtPrefix.Text = upload.KeyPrefix;
@@ -45,8 +43,6 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
         }
         public override ActionBase CreateFromForm()
         {
-            this.EnsureChildControls();
-
             return new UploadFilesToS3Action
             {
                 FileMasks = this.txtFileMasks.Text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries),

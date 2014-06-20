@@ -71,24 +71,19 @@
     <Compile Include="AmazonConfigurerEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="CloudFormation\Actions\DeleteStackAction.cs" />
-    <Compile Include="CloudFormation\Actions\DeleteStackActionEditor.cs">
+    <Compile Include="CloudFormation\DeleteStackAction.cs" />
+    <Compile Include="CloudFormation\DeleteStackActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="CloudFormation\Actions\DeployTemplateAction.cs" />
-    <Compile Include="CloudFormation\Actions\DeployTemplateActionEditor.cs">
+    <Compile Include="CloudFormation\DeployTemplateAction.cs" />
+    <Compile Include="CloudFormation\DeployTemplateActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="CloudFormation\Actions\WaitForStackCreationAction.cs" />
-    <Compile Include="CloudFormation\Actions\WaitForStackCreationActionEditor.cs">
+    <Compile Include="CloudFormation\WaitForStackCreationAction.cs" />
+    <Compile Include="CloudFormation\WaitForStackCreationActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="CloudFormation\CloudFormationAction.cs" />
-    <Compile Include="CloudFormation\CloudFormationActionEditor.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="CloudFormation\Extensions.cs" />
-    <Compile Include="CloudFormation\ICloudFormationAction.cs" />
+    <Compile Include="CloudFormation\CloudFormationActionBase.cs" />
     <Compile Include="EC2\CreateEC2InstanceAction.cs" />
     <Compile Include="EC2\CreateEC2InstanceActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -110,7 +105,11 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="CloudFormation\DeployTemplateActionEditor.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if exist $(SolutionDir) cmd /c "del $(SolutionDir)..\..\BuildMaster\ExtensionLib\$(TargetName).bmx"

@@ -11,14 +11,12 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
         "An action that deletes an Amazon CloudFormation stack.")]
     [CustomEditor(typeof(DeleteStackActionEditor))]
     [Tag("amazon"), Tag("cloud")]
-    public class DeleteStackAction : CloudFormationAction 
+    public sealed class DeleteStackAction : CloudFormationActionBase 
     {
         [Persistent]
-        [DisplayName("Stack Name")]
         public string StackName { get; set; }
 
         [Persistent]
-        [DisplayName("Wait Until Complete")]
         public bool WaitUntilComplete { get; set; }
 
         public override string ToString()
@@ -29,13 +27,15 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
         protected override void Execute()
         {
             this.LogInformation("Waiting for CloudFormation stack deletion.");
-            if (InitClient())
+
+            using (var client = this.GetClient())
             {
-                LogInformation("CloudFormation delete stack {0}", StackName);
-                client.DeleteStack(new DeleteStackRequest { StackName = StackName });
-                if (WaitUntilComplete)
-                    WaitForStack(StackName, "N/A", CloudFormationAction.DELETE_IN_PROGRESS, CloudFormationAction.DELETE_COMPLETE);
+                this.LogInformation("CloudFormation delete stack {0}", this.StackName);
+                client.DeleteStack(new DeleteStackRequest { StackName = this.StackName });
+                if (this.WaitUntilComplete)
+                    this.WaitForStack(client, this.StackName, "N/A", CloudFormationActionBase.DELETE_IN_PROGRESS, CloudFormationActionBase.DELETE_COMPLETE);
             }
+
             this.LogInformation("Done deleting CloudFormation stack.");
         }
     }

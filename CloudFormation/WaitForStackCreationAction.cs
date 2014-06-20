@@ -10,10 +10,9 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
         "An action that waits for an Amazon CloudFormation stack to complete.")]
     [CustomEditor(typeof(WaitForStackCreationActionEditor))]
     [Tag("amazon"), Tag("cloud")]
-    public class WaitForStackCreationAction : CloudFormationAction 
+    public sealed class WaitForStackCreationAction : CloudFormationActionBase 
     {
         [Persistent]
-        [DisplayName("Stack Name")]
         public string StackName { get; set; }
 
         public override string ToString()
@@ -24,12 +23,12 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
         protected override void Execute()
         {
             this.LogInformation("Waiting for CloudFormation stack creation.");
-            if (InitClient())
+            using (var client = this.GetClient())
             {
-                WaitForStack(StackName, "N/A", CloudFormationAction.CREATE_IN_PROGRESS, CloudFormationAction.CREATE_COMPLETE);
+                this.WaitForStack(client, this.StackName, "N/A", CloudFormationActionBase.CREATE_IN_PROGRESS, CloudFormationActionBase.CREATE_COMPLETE);
             }
+
             this.LogInformation("Done waiting for CloudFormation stack creation.");
         }
-
     }
 }
