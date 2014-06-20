@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Amazon.CloudFormation.Model;
+﻿using Amazon.CloudFormation.Model;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
@@ -19,9 +18,18 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
         [Persistent]
         public bool WaitUntilComplete { get; set; }
 
-        public override string ToString()
+        public override ActionDescription GetActionDescription()
         {
-            return string.Format("Delete Amazon CloudFormation Stack");
+            return new ActionDescription(
+                new ShortActionDescription(
+                    "Delete ",
+                    new Hilite(this.StackName),
+                    " CloudFormation Stack"
+                ),
+                new LongActionDescription(
+                    this.WaitUntilComplete ? "and wait until the operation is complete" : string.Empty
+                )
+            );
         }
 
         protected override void Execute()

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Inedo.BuildMaster;
+﻿using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
 
@@ -15,9 +14,15 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
         [Persistent]
         public string StackName { get; set; }
 
-        public override string ToString()
+        public override ActionDescription GetActionDescription()
         {
-            return string.Format("Wait for Amazon CloudFormation Stack");
+            return new ActionDescription(
+                new ShortActionDescription(
+                    "Wait for ",
+                    new Hilite(this.StackName),
+                    " CloudFormation Stack to be Created"
+                )
+            );
         }
 
         protected override void Execute()

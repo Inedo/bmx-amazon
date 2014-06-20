@@ -12,27 +12,24 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
     [Tag("amazon"), Tag("cloud")]
     public sealed class CreateEC2InstanceAction : RemoteActionBase
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CreateEC2InstanceAction"/> class.
-        /// </summary>
-        public CreateEC2InstanceAction()
-        {
-        }
-
-        /// <summary>
-        /// Gets or sets the image ID used to create the instance.
-        /// </summary>
         [Persistent]
         public string AmiID { get; set; }
-        /// <summary>
-        /// Gets or sets an optional IP address to associate with the instance.
-        /// </summary>
         [Persistent]
         public string IPAddress { get; set; }
 
-        /// <summary>
-        /// This method is called to execute the Action.
-        /// </summary>
+        public override ActionDescription GetActionDescription()
+        {
+            return new ActionDescription(
+                new ShortActionDescription(
+                    "Create EC2 Instance from ",
+                    new Hilite(this.AmiID)
+                ),
+                new LongActionDescription(
+                    !string.IsNullOrEmpty(this.IPAddress) ? ("with public IP address: " + this.IPAddress) : string.Empty
+                )
+            );
+        }
+
         protected override void Execute()
         {
             if (string.IsNullOrEmpty(this.AmiID))
@@ -48,14 +45,6 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
 
             ExecuteRemoteCommand("exec");
         }
-
-        /// <summary>
-        /// When implemented in a derived class, processes an arbitrary command
-        /// on the appropriate server.
-        /// </summary>
-        /// <param name="name">Name of command to process.</param>
-        /// <param name="args">Optional command arguments.</param>
-        /// <returns>Result of the command.</returns>
         protected override string ProcessRemoteCommand(string name, string[] args)
         {
             LogInformation("Contacting Amazon EC2 Service...");
@@ -90,37 +79,6 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
             }
 
             return string.Empty;
-        }
-
-        /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
-        public override string ToString()
-        {
-            if (!string.IsNullOrEmpty(this.IPAddress))
-                return string.Format("Create an Amazon EC2 instance associated with the IP \"{0}\" using the AMI \"{1}\"", this.IPAddress, this.AmiID);
-            else
-                return string.Format("Create an Amazon EC2 instance using the AMI \"{0}\"", this.AmiID);
-        }
-        /// <summary>
-        /// Returns a value indicating whether the extension's configurer currently needs to be
-        /// configured.
-        /// </summary>
-        /// <returns>
-        /// True if configurer requires configuration; otherwise false.
-        /// </returns>
-        public override bool IsConfigurerSettingRequired()
-        {
-            return false;
-            //var configurer = Util.Actions.GetConfigurer<CreateEC2InstanceAction>() as AmazonConfigurer;
-
-            //if (configurer != null)
-            //    return string.IsNullOrEmpty(configurer.AccessKeyId) || string.IsNullOrEmpty(configurer.SecretAccessKey);
-            //else
-            //    return true;
         }
     }
 }

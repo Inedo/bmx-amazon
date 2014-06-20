@@ -45,11 +45,23 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
         [Persistent]
         public FailureAction ActionOnFail { get; set; }
 
-        internal string templateData { get; set; }
-
-        public override string ToString()
+        public override ActionDescription GetActionDescription()
         {
-            return string.Format("Deploy Amazon CloudFormation template.");
+            var longDesc = new LongActionDescription();
+            if (!string.IsNullOrEmpty(this.BucketName))
+                longDesc.AppendContent("from S3 URL: ", new Hilite(this.BucketName));
+            else if (!string.IsNullOrEmpty(this.TemplateFile))
+                longDesc.AppendContent("from ", new Hilite(this.TemplateFile), " configuration file");
+            else if (!string.IsNullOrEmpty(this.TemplateText))
+                longDesc.AppendContent("from ", new Hilite("template stored in action"));
+
+            return new ActionDescription(
+                new ShortActionDescription(
+                    "Deploy CloudFormation Template for Stack ",
+                    new Hilite(this.StackName)
+                ),
+                longDesc
+            );
         }
 
         protected override void Execute()
@@ -57,6 +69,8 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
             this.LogInformation("CloudFormation starting template deploy.");
             using (var client = this.GetClient())
             {
+                var templateData = string.Empty;
+
                 if (string.IsNullOrEmpty(this.BucketName))
                     templateData = this.GetTemplateText();
 
