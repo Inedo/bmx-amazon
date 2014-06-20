@@ -32,11 +32,39 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
         protected IAmazonCloudFormation GetClient()
         {
             var configurer = (AmazonConfigurer)this.GetExtensionConfigurer();
-            return AWSClientFactory.CreateAmazonCloudFormationClient(
-                this.overriddenAccessKey ?? configurer.AccessKeyId,
-                this.overriddenSecretKey ?? configurer.SecretAccessKey,
-                RegionEndpoint.GetBySystemName(this.overriddenRegion ?? configurer.RegionEndpoint)
-            );
+
+            var accessKey = this.overriddenAccessKey ?? configurer.AccessKeyId;
+            var secretKey = this.overriddenSecretKey ?? configurer.SecretAccessKey;
+            var endpointName = this.overriddenRegion ?? configurer.RegionEndpoint;
+
+            if (string.IsNullOrEmpty(accessKey))
+            {
+                this.LogError("Amazon AWS access key must be specified in the configuration profile for the Amazon extension.");
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(secretKey))
+            {
+                this.LogError("Amazon AWS secret key must be specified in the configuration profile for the Amazon extension.");
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(endpointName))
+                endpointName = RegionEndpoint.USWest1.SystemName;
+
+            try
+            {
+                return AWSClientFactory.CreateAmazonCloudFormationClient(
+                    accessKey,
+                    secretKey,
+                    RegionEndpoint.GetBySystemName(endpointName)
+                );
+            }
+            catch (Exception ex)
+            {
+                this.LogError("Cannot connect to AWS endpoint: " + ex.Message);
+                return null;
+            }
         }
 
         protected void WaitForStack(IAmazonCloudFormation client, string stackName, string stackId, string statusToWaitOn, string successStatus)

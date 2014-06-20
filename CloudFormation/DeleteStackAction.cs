@@ -38,6 +38,9 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 
             using (var client = this.GetClient())
             {
+                if (client == null)
+                    return;
+
                 this.LogInformation("CloudFormation delete stack {0}", this.StackName);
                 client.DeleteStack(new DeleteStackRequest { StackName = this.StackName });
                 if (this.WaitUntilComplete)

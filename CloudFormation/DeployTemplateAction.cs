@@ -69,6 +69,9 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
             this.LogInformation("CloudFormation starting template deploy.");
             using (var client = this.GetClient())
             {
+                if (client == null)
+                    return;
+
                 var templateData = string.Empty;
 
                 if (string.IsNullOrEmpty(this.BucketName))

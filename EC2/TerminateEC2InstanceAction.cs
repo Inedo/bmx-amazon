@@ -11,7 +11,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
         "Terminates an Amazon EC2 instance at the specified IP Address.")]
     [Tag("amazon"), Tag("cloud")]
     [CustomEditor(typeof(TerminateEC2InstanceActionEditor))]
-    public sealed class TerminateEC2InstanceAction : RemoteActionBase
+    public sealed class TerminateEC2InstanceAction : ActionBase
     {
         [Persistent]
         public string InstanceIdOrIPAddress { get; set; }
@@ -36,15 +36,10 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
             if (string.IsNullOrEmpty(cfg.AccessKeyId) || string.IsNullOrEmpty(cfg.SecretAccessKey))
                 throw new InvalidOperationException("A valid Amazon access key ID and secret access key pair must be specified in the EC2 extension configuration.");
 
-            ExecuteRemoteCommand("term");
-        }
-        protected override string ProcessRemoteCommand(string name, string[] args)
-        {
             LogInformation("Contacting Amazon EC2 Service...");
 
             var instanceId = this.InstanceIdOrIPAddress;
 
-            var cfg = (AmazonConfigurer)GetExtensionConfigurer();
             var ec2 = global::Amazon.AWSClientFactory.CreateAmazonEC2Client(cfg.AccessKeyId, cfg.SecretAccessKey);
 
             System.Net.IPAddress address;
@@ -84,8 +79,6 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
                 LogInformation(string.Format("Instance {0} has been terminated.", instanceId));
             else
                 LogWarning(string.Format("Instance {0} could not be terminated.", instanceId));
-
-            return string.Empty;
         }
     }
 }

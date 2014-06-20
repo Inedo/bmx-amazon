@@ -10,7 +10,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
         "Launches an Amazon EC2 instance using the specified AMI.")]
     [CustomEditor(typeof(CreateEC2InstanceActionEditor))]
     [Tag("amazon"), Tag("cloud")]
-    public sealed class CreateEC2InstanceAction : RemoteActionBase
+    public sealed class CreateEC2InstanceAction : ActionBase
     {
         [Persistent]
         public string AmiID { get; set; }
@@ -43,13 +43,8 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
             if (string.IsNullOrEmpty(cfg.AccessKeyId) || string.IsNullOrEmpty(cfg.SecretAccessKey))
                 throw new InvalidOperationException("A valid Amazon access key ID and secret access key pair must be specified in the EC2 extension configuration.");
 
-            ExecuteRemoteCommand("exec");
-        }
-        protected override string ProcessRemoteCommand(string name, string[] args)
-        {
             LogInformation("Contacting Amazon EC2 Service...");
 
-            var cfg = (AmazonConfigurer)GetExtensionConfigurer();
             var ec2 = global::Amazon.AWSClientFactory.CreateAmazonEC2Client(cfg.AccessKeyId, cfg.SecretAccessKey);
 
             LogInformation(string.Format("Creating instance from {0}", this.AmiID));
@@ -77,8 +72,6 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
 
                 LogInformation("IP address associated.");
             }
-
-            return string.Empty;
         }
     }
 }

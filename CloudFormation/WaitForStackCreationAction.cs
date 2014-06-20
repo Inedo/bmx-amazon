@@ -30,6 +30,9 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
             this.LogInformation("Waiting for CloudFormation stack creation.");
             using (var client = this.GetClient())
             {
+                if (client == null)
+                    return;
+
                 this.WaitForStack(client, this.StackName, "N/A", CloudFormationActionBase.CREATE_IN_PROGRESS, CloudFormationActionBase.CREATE_COMPLETE);
             }
 
