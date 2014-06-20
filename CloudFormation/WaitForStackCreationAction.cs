@@ -1,4 +1,5 @@
-﻿using Inedo.BuildMaster;
+﻿using Amazon.CloudFormation;
+using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
 
@@ -25,18 +26,14 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
             );
         }
 
-        protected override void Execute()
+        protected override void Execute(IAmazonCloudFormation client)
         {
-            this.LogInformation("Waiting for CloudFormation stack creation.");
-            using (var client = this.GetClient())
-            {
-                if (client == null)
-                    return;
+            this.LogInformation("Waiting for {0} stack to be created...", this.StackName);
 
-                this.WaitForStack(client, this.StackName, "N/A", CloudFormationActionBase.CREATE_IN_PROGRESS, CloudFormationActionBase.CREATE_COMPLETE);
-            }
+            if (!this.WaitForStack(client, this.StackName, "N/A", CloudFormationActionBase.CREATE_IN_PROGRESS, CloudFormationActionBase.CREATE_COMPLETE))
+                return;
 
-            this.LogInformation("Done waiting for CloudFormation stack creation.");
+            this.LogInformation("Stack is created.");
         }
     }
 }

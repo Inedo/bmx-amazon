@@ -1,4 +1,5 @@
-﻿using Amazon.CloudFormation.Model;
+﻿using Amazon.CloudFormation;
+using Amazon.CloudFormation.Model;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
@@ -32,22 +33,22 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
             );
         }
 
-        protected override void Execute()
+        protected override void Execute(IAmazonCloudFormation client)
         {
-            this.LogInformation("Waiting for CloudFormation stack deletion.");
+            this.LogInformation("Deleting stack {0}...", this.StackName);
 
-            using (var client = this.GetClient())
+            client.DeleteStack(new DeleteStackRequest { StackName = this.StackName });
+            if (this.WaitUntilComplete)
             {
-                if (client == null)
+                if (!this.WaitForStack(client, this.StackName, "N/A", CloudFormationActionBase.DELETE_IN_PROGRESS, CloudFormationActionBase.DELETE_COMPLETE))
                     return;
 
-                this.LogInformation("CloudFormation delete stack {0}", this.StackName);
-                client.DeleteStack(new DeleteStackRequest { StackName = this.StackName });
-                if (this.WaitUntilComplete)
-                    this.WaitForStack(client, this.StackName, "N/A", CloudFormationActionBase.DELETE_IN_PROGRESS, CloudFormationActionBase.DELETE_COMPLETE);
+                this.LogInformation("Stack deleted.");
             }
-
-            this.LogInformation("Done deleting CloudFormation stack.");
+            else
+            {
+                this.LogInformation("Delete command issued.");
+            }
         }
     }
 }

@@ -14,6 +14,13 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
     public abstract class CloudFormationActionBase : ActionBase, IMissingPersistentPropertyHandler
     {
+        internal const string CREATE_IN_PROGRESS = "CREATE_IN_PROGRESS";
+        internal const string CREATE_FAILED = "CREATE_FAILED";
+        internal const string CREATE_COMPLETE = "CREATE_COMPLETE";
+        internal const string DELETE_IN_PROGRESS = "DELETE_IN_PROGRESS";
+        internal const string DELETE_FAILED = "DELETE_FAILED";
+        internal const string DELETE_COMPLETE = "DELETE_COMPLETE";
+
         private string overriddenAccessKey;
         private string overriddenSecretKey;
         private string overriddenRegion;
@@ -22,14 +29,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
         {
         }
 
-        public const string CREATE_IN_PROGRESS = "CREATE_IN_PROGRESS";
-        public const string CREATE_FAILED = "CREATE_FAILED";
-        public const string CREATE_COMPLETE = "CREATE_COMPLETE";
-        public const string DELETE_IN_PROGRESS = "DELETE_IN_PROGRESS";
-        public const string DELETE_FAILED = "DELETE_FAILED";
-        public const string DELETE_COMPLETE = "DELETE_COMPLETE";
-
-        protected IAmazonCloudFormation GetClient()
+        protected override sealed void Execute()
         {
             var configurer = (AmazonConfigurer)this.GetExtensionConfigurer();
 
@@ -40,60 +40,72 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
             if (string.IsNullOrEmpty(accessKey))
             {
                 this.LogError("Amazon AWS access key must be specified in the configuration profile for the Amazon extension.");
-                return null;
+                return;
             }
 
             if (string.IsNullOrEmpty(secretKey))
             {
                 this.LogError("Amazon AWS secret key must be specified in the configuration profile for the Amazon extension.");
-                return null;
+                return;
             }
 
             if (string.IsNullOrEmpty(endpointName))
                 endpointName = RegionEndpoint.USWest1.SystemName;
 
+            IAmazonCloudFormation client;
             try
             {
-                return AWSClientFactory.CreateAmazonCloudFormationClient(
+                this.LogDebug("Connecting to AWS endpoint...");
+                client = AWSClientFactory.CreateAmazonCloudFormationClient(
                     accessKey,
                     secretKey,
                     RegionEndpoint.GetBySystemName(endpointName)
                 );
+
+                this.LogDebug("Connected.");
             }
             catch (Exception ex)
             {
                 this.LogError("Cannot connect to AWS endpoint: " + ex.Message);
-                return null;
+                return;
+            }
+
+            using (client)
+            {
+                this.Execute(client);
             }
         }
+        protected abstract void Execute(IAmazonCloudFormation client);
 
-        protected void WaitForStack(IAmazonCloudFormation client, string stackName, string stackId, string statusToWaitOn, string successStatus)
+        protected bool WaitForStack(IAmazonCloudFormation client, string stackName, string stackId, string statusToWaitOn, string successStatus)
         {
-            this.LogInformation("CloudFormation waiting for stack {0} ({1}) to get out of {2} status.", stackName, stackId, statusToWaitOn);
             var req = new DescribeStacksRequest { StackName = stackName };
 
             var resp = client.DescribeStacks(req);
             if (resp.Stacks.Count < 1)
             {
                 this.LogError("CloudFormation error in WaitForStack: No stacks in DescribeStacks");
-                return;
+                return false;
             }
 
             while (resp.Stacks[0].StackStatus == statusToWaitOn)
             {
-                Thread.Sleep(20000);
+                this.Context.CancellationToken.WaitHandle.WaitOne(20000);
+                this.ThrowIfCanceledOrTimeoutExpired();
+
                 resp = client.DescribeStacks(req);
                 if (resp.Stacks.Count < 1)
                 {
                     this.LogError("CloudFormation error in WaitForStack: No stacks in DescribeStacks");
-                    return;
+                    return false;
                 }
             }
 
             if (successStatus == resp.Stacks[0].StackStatus)
-                this.LogInformation("CloudFormation stack {0} ({1}) completed successfully. Output: {2}", stackName, stackId, AsString(resp.Stacks[0].Outputs));
-            else
-                this.LogError("CloudFormation stack {0} ({1}) failed with status: {2}. Output: {3}", stackName, stackId, resp.Stacks[0].StackStatus, AsString(resp.Stacks[0].Outputs));
+                return true;
+
+            this.LogError("CloudFormation stack {0} ({1}) failed with status: {2}. Output: {3}", stackName, stackId, resp.Stacks[0].StackStatus, AsString(resp.Stacks[0].Outputs));
+            return false;
         }
         
         void IMissingPersistentPropertyHandler.OnDeserializedMissingProperties(IDictionary<string, string> missingProperties)
