@@ -29,7 +29,7 @@ namespace Inedo.BuildMasterExtensions.Amazon
         /// <summary>
         /// Gets or sets the EC2 secret access key (password).
         /// </summary>
-        [Persistent]
+        [Persistent(Encrypted = true)]
         public string SecretAccessKey { get; set; }
         /// <summary>
         /// Gets or sets the part size (in MB) used for multipart transfers.
