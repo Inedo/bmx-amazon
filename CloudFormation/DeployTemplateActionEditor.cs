@@ -4,6 +4,7 @@ using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web.Controls.Extensions;
 using Inedo.Web.ClientResources;
 using Inedo.Web.Controls;
+using Inedo.Web.Controls.SimpleHtml;
 
 namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
@@ -12,6 +13,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
         private DropDownList ddlTemplateMode;
         private ValidatingTextBox txtBucketName;
         private ValidatingTextBox txtTemplateFile;
+        private ValidatingTextBox txtTemplateInstanceName;
         private TextBox txtParams;
         private TextBox txtTemplate;
         private ValidatingTextBox txtStackName;
@@ -24,6 +26,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
         {
             var action = (DeployTemplateAction)extension as DeployTemplateAction;
             this.txtTemplateFile.Text = action.TemplateFile;
+            this.txtTemplateInstanceName.Text = action.TemplateInstanceName;
             this.txtBucketName.Text = action.BucketName;
             this.txtParams.Text = action.Parameters;
             this.txtTemplate.Text = action.TemplateText;
@@ -45,6 +48,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
             return new DeployTemplateAction
             {
                 TemplateFile = this.ddlTemplateMode.SelectedValue == "config" ? this.txtTemplateFile.Text : null,
+                TemplateInstanceName = this.txtTemplateInstanceName.Text,
                 BucketName = this.ddlTemplateMode.SelectedValue == "s3" ? this.txtBucketName.Text : null,
                 TemplateText = this.ddlTemplateMode.SelectedValue == "direct" ? this.txtTemplate.Text : null,
                 Parameters = this.txtParams.Text,
@@ -72,6 +76,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 
             this.txtBucketName = new ValidatingTextBox();
             this.txtTemplateFile = new ValidatingTextBox();
+            this.txtTemplateInstanceName = new ValidatingTextBox() { DefaultText = "Use current environment name" };
             this.txtParams = new TextBox { TextMode = TextBoxMode.MultiLine, Rows = 3 };
             this.txtTemplate = new TextBox { TextMode = TextBoxMode.MultiLine, Rows = 3 };
             this.txtStackName = new ValidatingTextBox { Required = true };
@@ -91,7 +96,10 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
             };
 
             var ctlS3Container = new SlimFormField("S3 URL:", this.txtBucketName) { ID = "ctlS3Container" };
-            var ctlConfigContainer = new SlimFormField("Configuration file:", this.txtTemplateFile) { ID = "ctlConfigContainer" };
+            var ctlConfigContainer = new Div(
+                new SlimFormField("Configuration file:", this.txtTemplateFile),
+                new SlimFormField("Instance name:", this.txtTemplateInstanceName)
+            ) { ID = "ctlConfigContainer" };
             var ctlDirectContainer = new SlimFormField("Template:", this.txtTemplate) { ID = "ctlDirectContainer" };
 
             this.Controls.Add(

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Amazon.CloudFormation;
 using Amazon.CloudFormation.Model;
 using Inedo.BuildMaster;
+using Inedo.BuildMaster.ConfigurationFiles;
 using Inedo.BuildMaster.Data;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
@@ -20,31 +22,25 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
     {
         [Persistent]
         public string BucketName { get; set; }
-
         [Persistent]
         public string TemplateFile { get; set; }
-
+        [Persistent]
+        public string TemplateInstanceName { get; set; }
         [Persistent]
         public string Parameters { get; set; }
-
         [Persistent]
         public string TemplateText { get; set; }
-
         [Persistent]
         public string StackName { get; set; }
-
         [Persistent]
         public string Tags { get; set; }
-
         [Persistent]
         public string Capabilities { get; set; }
-
         [Persistent]
         public bool WaitUntilComplete { get; set; }
-
         [Persistent]
         public FailureAction ActionOnFail { get; set; }
-
+        
         public override ActionDescription GetActionDescription()
         {
             var longDesc = new LongActionDescription();
@@ -139,43 +135,67 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
             this.LogInformation("CloudFormation TemplateText is empty, looking for a config file");
             if (!string.IsNullOrEmpty(this.TemplateFile))
             {
-                var config = StoredProcs.ConfigurationFiles_GetConfigurationFiles(this.Context.ApplicationId, this.Context.DeployableId, Domains.YN.No)
-                    .Execute()
-                    .FirstOrDefault(c => string.Equals(c.FilePath_Text, this.TemplateFile, StringComparison.OrdinalIgnoreCase));
+                var configInfo = StoredProcs.ConfigurationFiles_GetConfigurationFiles(Application_Id: this.Context.ApplicationId, Deployable_Id: null, IncludeInstances_Indicator: Domains.YN.Yes)
+                    .Execute();
 
-                if (config == null)
+                var configFiles = from file in configInfo.ConfigurationFiles_Extended
+                                  let matchesDeployable = file.Deployable_Id == this.Context.DeployableId
+                                  let matchesName = string.Equals(file.ConfigurationFile_Name, this.TemplateFile, StringComparison.OrdinalIgnoreCase)
+                                  let matchesPath = string.Equals(file.FilePath_Text, this.TemplateFile, StringComparison.OrdinalIgnoreCase)
+                                  where matchesName || matchesPath
+                                  orderby matchesDeployable descending, matchesName descending, matchesPath descending
+                                  select file;
+
+                var configFile = configFiles.FirstOrDefault();
+
+                if (configFile == null)
                 {
                     this.LogError("Unable to find configuration file {0}.", this.TemplateFile);
                     return null;
                 }
 
-                var configVersion = StoredProcs.ConfigurationFiles_GetConfigurationFileVersion(
-                    ConfigurationFile_Id: config.ConfigurationFile_Id,
-                    Release_Number: this.Context.ReleaseNumber)
-                    .Execute()
-                    .FirstOrDefault(v => v.Environment_Id == this.Context.EnvironmentId);
-
-                if (configVersion == null)
-                {
-                    var environment = StoredProcs.Environments_GetEnvironment(this.Context.EnvironmentId)
-                        .Execute()
-                        .Environments
-                        .FirstOrDefault();
-
-                    this.LogError("Unable to find instance of configuration file {0} associated with {1} environment.", this.TemplateFile, environment != null ? environment.Environment_Name : "unknown");
+                string instanceName = this.GetTemplateFileInstanceName(configInfo.ConfigurationFileInstances_Extended);
+                
+                if (instanceName == null)
                     return null;
-                }
 
-                if (configVersion.File_Bytes == null || configVersion.File_Bytes.Length == 0)
+                var writer = new StringWriter();
+                var deployer = new ConfigurationFileDeployer(
+                    new ConfigurationFileDeploymentOptions
+                    {
+                        ConfigurationFileId = configFile.ConfigurationFile_Id,
+                        InstanceName = instanceName
+                    }
+                );
+                deployer.Write((Inedo.BuildMaster.Extensibility.IGenericBuildMasterContext)this.Context, writer);
+                
+                string configFileContents = writer.ToString();
+                if (string.IsNullOrEmpty(configFileContents))
                 {
                     this.LogError("Configuration file {0} is empty.", this.TemplateFile);
                     return null;
                 }
 
-                return Encoding.UTF8.GetString(configVersion.File_Bytes);
+                return configFileContents;
             }
 
             return null;
+        }
+
+        private string GetTemplateFileInstanceName(IEnumerable<Tables.ConfigurationFileInstances_Extended> instances)
+        {
+            if (!string.IsNullOrEmpty(this.TemplateInstanceName))
+                return this.TemplateInstanceName;
+            
+            var instance = instances.FirstOrDefault(i => i.Environment_Id == this.Context.EnvironmentId);
+            if (instance == null)
+            {
+                this.LogError("Unable to find configuration file instance based on the current environment. "
+                    + "Make sure to specify a template file instance name for this action.");
+                return null;
+            }
+
+            return instance.Instance_Name;
         }
 
         private static Dictionary<string, string> ParseNameValue(string value)
