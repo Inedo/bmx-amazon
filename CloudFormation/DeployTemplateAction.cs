@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Amazon.CloudFormation;
 using Amazon.CloudFormation.Model;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.ConfigurationFiles;
 using Inedo.BuildMaster.Data;
-using Inedo.BuildMaster.Extensibility.Actions;
+using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Web;
+using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
-    [ActionProperties(
-        "Deploy CloudFormation Template",
-        "An action that deploys an Amazon CloudFormation template.")]
+    [DisplayName("Deploy CloudFormation Template")]
+    [Description("An action that deploys an Amazon CloudFormation template.")]
     [CustomEditor(typeof(DeployTemplateActionEditor))]
     [Tag("amazon"), Tag("cloud")]
-    public sealed class DeployTemplateAction : CloudFormationActionBase 
+    public sealed class DeployTemplateAction : CloudFormationActionBase
     {
         [Persistent]
         public string BucketName { get; set; }
@@ -40,10 +40,10 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
         public bool WaitUntilComplete { get; set; }
         [Persistent]
         public FailureAction ActionOnFail { get; set; }
-        
-        public override ActionDescription GetActionDescription()
+
+        public override ExtendedRichDescription GetActionDescription()
         {
-            var longDesc = new LongActionDescription();
+            var longDesc = new RichDescription();
             if (!string.IsNullOrEmpty(this.BucketName))
                 longDesc.AppendContent("from S3 URL: ", new Hilite(this.BucketName));
             else if (!string.IsNullOrEmpty(this.TemplateFile))
@@ -51,8 +51,8 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
             else if (!string.IsNullOrEmpty(this.TemplateText))
                 longDesc.AppendContent("from ", new Hilite("template stored in action"));
 
-            return new ActionDescription(
-                new ShortActionDescription(
+            return new ExtendedRichDescription(
+                new RichDescription(
                     "Deploy CloudFormation Template for Stack ",
                     new Hilite(this.StackName)
                 ),
@@ -120,7 +120,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
                 var result = client.CreateStack(req);
                 return result.StackId;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 this.LogError("Error creating stack: " + ex.Message);
                 return null;
@@ -155,7 +155,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
                 }
 
                 string instanceName = this.GetTemplateFileInstanceName(configInfo.ConfigurationFileInstances_Extended);
-                
+
                 if (instanceName == null)
                     return null;
 
@@ -168,7 +168,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
                     }
                 );
                 deployer.Write((Inedo.BuildMaster.Extensibility.IGenericBuildMasterContext)this.Context, writer);
-                
+
                 string configFileContents = writer.ToString();
                 if (string.IsNullOrEmpty(configFileContents))
                 {
@@ -186,7 +186,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
         {
             if (!string.IsNullOrEmpty(this.TemplateInstanceName))
                 return this.TemplateInstanceName;
-            
+
             var instance = instances.FirstOrDefault(i => i.Environment_Id == this.Context.EnvironmentId);
             if (instance == null)
             {

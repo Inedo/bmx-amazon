@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Inedo.BuildMaster;
+using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
+using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Amazon.EC2
 {
-    [ActionProperties(
-        "Terminate Amazon EC2 Instance",
-        "Terminates an Amazon EC2 instance at the specified IP Address.")]
+    [DisplayName("Terminate Amazon EC2 Instance")]
+    [Description("Terminates an Amazon EC2 instance at the specified IP Address.")]
     [Tag("amazon"), Tag("cloud")]
     [CustomEditor(typeof(TerminateEC2InstanceActionEditor))]
     public sealed class TerminateEC2InstanceAction : ActionBase
@@ -16,10 +18,10 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
         [Persistent]
         public string InstanceIdOrIPAddress { get; set; }
 
-        public override ActionDescription GetActionDescription()
+        public override ExtendedRichDescription GetActionDescription()
         {
-            return new ActionDescription(
-                new ShortActionDescription(
+            return new ExtendedRichDescription(
+                new RichDescription(
                     "Terminate ",
                     new Hilite(this.InstanceIdOrIPAddress),
                     " EC2 Instance"
@@ -40,7 +42,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
 
             var instanceId = this.InstanceIdOrIPAddress;
 
-            var ec2 = global::Amazon.AWSClientFactory.CreateAmazonEC2Client(cfg.AccessKeyId, cfg.SecretAccessKey);
+            var ec2 = new global::Amazon.EC2.AmazonEC2Client(cfg.AccessKeyId, cfg.SecretAccessKey);
 
             System.Net.IPAddress address;
             if (System.Net.IPAddress.TryParse(instanceId, out address))

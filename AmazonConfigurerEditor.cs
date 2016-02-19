@@ -7,9 +7,6 @@ using Inedo.Web.Controls;
 
 namespace Inedo.BuildMasterExtensions.Amazon
 {
-    /// <summary>
-    /// Custom editor for the Amazon EC2 configurer class.
-    /// </summary>
     internal sealed class AmazonConfigurerEditor : ExtensionConfigurerEditorBase
     {
         private ValidatingTextBox txtKeyId;
@@ -55,12 +52,6 @@ namespace Inedo.BuildMasterExtensions.Amazon
                 RegionEndpoint = this.ddlRegionEndpoint.SelectedValue
             };
         }
-        /// <summary>
-        /// Populates the fields within the control with the appropriate default values.
-        /// </summary>
-        /// <remarks>
-        /// This is only called when creating a new extension.
-        /// </remarks>
         public override void InitializeDefaultValues()
         {
             this.BindToForm(new AmazonConfigurer());

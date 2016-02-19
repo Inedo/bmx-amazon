@@ -1,17 +1,18 @@
-﻿using Amazon.CloudFormation;
+﻿using System.ComponentModel;
+using Amazon.CloudFormation;
 using Amazon.CloudFormation.Model;
 using Inedo.BuildMaster;
-using Inedo.BuildMaster.Extensibility.Actions;
+using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Web;
+using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
-    [ActionProperties(
-        "Delete CloudFormation Stack",
-        "An action that deletes an Amazon CloudFormation stack.")]
+    [DisplayName("Delete CloudFormation Stack")]
+    [Description("An action that deletes an Amazon CloudFormation stack.")]
     [CustomEditor(typeof(DeleteStackActionEditor))]
     [Tag("amazon"), Tag("cloud")]
-    public sealed class DeleteStackAction : CloudFormationActionBase 
+    public sealed class DeleteStackAction : CloudFormationActionBase
     {
         [Persistent]
         public string StackName { get; set; }
@@ -19,15 +20,15 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
         [Persistent]
         public bool WaitUntilComplete { get; set; }
 
-        public override ActionDescription GetActionDescription()
+        public override ExtendedRichDescription GetActionDescription()
         {
-            return new ActionDescription(
-                new ShortActionDescription(
+            return new ExtendedRichDescription(
+                new RichDescription(
                     "Delete ",
                     new Hilite(this.StackName),
                     " CloudFormation Stack"
                 ),
-                new LongActionDescription(
+                new RichDescription(
                     this.WaitUntilComplete ? "and wait until the operation is complete" : string.Empty
                 )
             );

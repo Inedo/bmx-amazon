@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 using Amazon;
 using Amazon.CloudFormation;
 using Amazon.CloudFormation.Model;
-using Inedo.BuildMaster.Extensibility;
 using Inedo.BuildMaster.Extensibility.Actions;
+using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
@@ -56,7 +55,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
             try
             {
                 this.LogDebug("Connecting to AWS endpoint...");
-                client = AWSClientFactory.CreateAmazonCloudFormationClient(
+                client = new global::Amazon.CloudFormation.AmazonCloudFormationClient(
                     accessKey,
                     secretKey,
                     RegionEndpoint.GetBySystemName(endpointName)
@@ -108,7 +107,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
             return false;
         }
         
-        void IMissingPersistentPropertyHandler.OnDeserializedMissingProperties(IDictionary<string, string> missingProperties)
+        void IMissingPersistentPropertyHandler.OnDeserializedMissingProperties(IReadOnlyDictionary<string, string> missingProperties)
         {
             var accessKey = missingProperties.GetValueOrDefault("AccessKey");
             var secretKey = missingProperties.GetValueOrDefault("SecretKey");

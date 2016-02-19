@@ -1,13 +1,15 @@
 ﻿using System;
+using System.ComponentModel;
 using Inedo.BuildMaster;
+using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
+using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Amazon.EC2
 {
-    [ActionProperties(
-        "Create Amazon EC2 Instance",
-        "Launches an Amazon EC2 instance using the specified AMI.")]
+    [DisplayName("Create Amazon EC2 Instance")]
+    [Description("Launches an Amazon EC2 instance using the specified AMI.")]
     [CustomEditor(typeof(CreateEC2InstanceActionEditor))]
     [Tag("amazon"), Tag("cloud")]
     public sealed class CreateEC2InstanceAction : ActionBase
@@ -17,14 +19,14 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
         [Persistent]
         public string IPAddress { get; set; }
 
-        public override ActionDescription GetActionDescription()
+        public override ExtendedRichDescription GetActionDescription()
         {
-            return new ActionDescription(
-                new ShortActionDescription(
+            return new ExtendedRichDescription(
+                new RichDescription(
                     "Create EC2 Instance from ",
                     new Hilite(this.AmiID)
                 ),
-                new LongActionDescription(
+                new RichDescription(
                     !string.IsNullOrEmpty(this.IPAddress) ? ("with public IP address: " + this.IPAddress) : string.Empty
                 )
             );
@@ -45,7 +47,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
 
             LogInformation("Contacting Amazon EC2 Service...");
 
-            var ec2 = global::Amazon.AWSClientFactory.CreateAmazonEC2Client(cfg.AccessKeyId, cfg.SecretAccessKey);
+            var ec2 = new global::Amazon.EC2.AmazonEC2Client(cfg.AccessKeyId, cfg.SecretAccessKey);
 
             LogInformation(string.Format("Creating instance from {0}", this.AmiID));
 

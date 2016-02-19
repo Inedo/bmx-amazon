@@ -2,7 +2,6 @@
 using System.Web.UI.WebControls;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web.Controls.Extensions;
-using Inedo.Web.ClientResources;
 using Inedo.Web.Controls;
 using Inedo.Web.Controls.SimpleHtml;
 
@@ -112,37 +111,8 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
                 new SlimFormField("Tags:", this.txtTags),
                 new SlimFormField("Capabilities:", this.txtCapabilities),
                 new SlimFormField("Failure action:", this.ddlFailureAction),
-                new SlimFormField("Options:", this.chkWaitUntilComplete),
-                new RenderJQueryDocReadyDelegator(
-                    w =>
-                    {
-                        w.Write("InitDeployTemplateActionEditor(");
-                        InedoLib.Util.JavaScript.WriteJson(
-                            w,
-                            new
-                            {
-                                modeSelector = "#" + this.ddlTemplateMode.ClientID,
-                                s3Selector = "#" + ctlS3Container.ClientID,
-                                configSelector = "#" + ctlConfigContainer.ClientID,
-                                directSelector = "#" + ctlDirectContainer.ClientID
-                            }
-                        );
-                        w.Write(");");
-                    }
-                )
+                new SlimFormField("Options:", this.chkWaitUntilComplete)
             );
-        }
-        protected override void OnPreRender(EventArgs e)
-        {
-            this.IncludeClientResourceInPage(
-                new JavascriptResource
-                {
-                    ResourcePath = "~/extension-resources/Amazon/CloudFormation/DeployTemplateActionEditor.js?" + typeof(DeployTemplateActionEditor).Assembly.GetName().Version,
-                    CompatibleVersions = { InedoLibCR.Versions.jq152, InedoLibCR.Versions.jq161, InedoLibCR.Versions.jq171 }
-                }
-            );
-
-            base.OnPreRender(e);
         }
     }
 }

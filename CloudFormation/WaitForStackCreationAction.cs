@@ -1,13 +1,14 @@
-﻿using Amazon.CloudFormation;
+﻿using System.ComponentModel;
+using Amazon.CloudFormation;
 using Inedo.BuildMaster;
-using Inedo.BuildMaster.Extensibility.Actions;
+using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Web;
+using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
-    [ActionProperties(
-        "Wait For CloudFormation Stack Creation",
-        "An action that waits for an Amazon CloudFormation stack to complete.")]
+    [DisplayName("Wait For CloudFormation Stack Creation")]
+    [Description("An action that waits for an Amazon CloudFormation stack to complete.")]
     [CustomEditor(typeof(WaitForStackCreationActionEditor))]
     [Tag("amazon"), Tag("cloud")]
     public sealed class WaitForStackCreationAction : CloudFormationActionBase 
@@ -15,10 +16,10 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
         [Persistent]
         public string StackName { get; set; }
 
-        public override ActionDescription GetActionDescription()
+        public override ExtendedRichDescription GetActionDescription()
         {
-            return new ActionDescription(
-                new ShortActionDescription(
+            return new ExtendedRichDescription(
+                new RichDescription(
                     "Wait for ",
                     new Hilite(this.StackName),
                     " CloudFormation Stack to be Created"

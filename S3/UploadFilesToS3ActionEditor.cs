@@ -17,18 +17,9 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
         private CheckBox chkEncrypted;
         private CheckBox chkRecursive;
 
-        public override bool DisplaySourceDirectory
-        {
-            get { return true; }
-        }
-        public override string ServerLabel
-        {
-            get { return "From:"; }
-        }
-        public override string SourceDirectoryLabel
-        {
-            get { return "In:"; }
-        }
+        public override bool DisplaySourceDirectory => true;
+        public override string ServerLabel => "From:";
+        public override string SourceDirectoryLabel => "In:";
 
         public override void BindToForm(ActionBase extension)
         {

@@ -1,74 +1,48 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Inedo.BuildMaster;
+using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Files;
 using Inedo.BuildMaster.Web;
+using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Amazon.S3
 {
-    [ActionProperties(
-        "Upload Files to S3",
-        "Transfers files to an Amazon S3 bucket.")]
+    [DisplayName("Upload Files to S3")]
+    [Description("Transfers files to an Amazon S3 bucket.")]
     [CustomEditor(typeof(UploadFilesToS3ActionEditor))]
     [Tag("amazon"), Tag("cloud")]
     public sealed class UploadFilesToS3Action : RemoteActionBase
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UploadFilesToS3Action"/> class.
-        /// </summary>
-        public UploadFilesToS3Action()
-        {
-        }
-
-        /// <summary>
-        /// Gets or sets the source files masks.
-        /// </summary>
         [Persistent]
         public string[] FileMasks { get; set; }
-        /// <summary>
-        /// Gets or sets the target directory.
-        /// </summary>
         [Persistent]
         public string KeyPrefix { get; set; }
-        /// <summary>
-        /// Gets or sets the bucket name.
-        /// </summary>
         [Persistent]
         public string BucketName { get; set; }
-        /// <summary>
-        /// Gets or sets a value indicating whether to use reduced redundancy storage.
-        /// </summary>
         [Persistent]
         public bool ReducedRedundancy { get; set; }
-        /// <summary>
-        /// Gets or sets a value indicating whther the files should be publicly accessible.
-        /// </summary>
         [Persistent]
         public bool MakePublic { get; set; }
-        /// <summary>
-        /// Gets or sets a value indicating whether to use server-side encryption.
-        /// </summary>
         [Persistent]
         public bool Encrypted { get; set; }
-        /// <summary>
-        /// Gets or sets a value indicating whether to upload files in subfolders.
-        /// </summary>
         [Persistent]
         public bool Recursive { get; set; }
 
-        public override ActionDescription GetActionDescription()
+        public override ExtendedRichDescription GetActionDescription()
         {
-            return new ActionDescription(
-                new ShortActionDescription(
+            return new ExtendedRichDescription(
+                new RichDescription(
                     "Upload ",
                     new ListHilite(this.FileMasks),
                     " to S3"
                 ),
-                new LongActionDescription(
+                new RichDescription(
                     "from ",
                     new DirectoryHilite(this.OverriddenSourceDirectory),
                     " to ",
