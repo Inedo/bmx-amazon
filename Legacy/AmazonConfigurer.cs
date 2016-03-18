@@ -1,5 +1,4 @@
-﻿using System;
-using Inedo.BuildMaster.Extensibility.Configurers.Extension;
+﻿using Inedo.BuildMaster.Extensibility.Configurers.Extension;
 using Inedo.BuildMaster.Web;
 using Inedo.Serialization;
 
@@ -7,7 +6,6 @@ using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Amazon
 {
-    [Serializable]
     [CustomEditor(typeof(AmazonConfigurerEditor))]
     public sealed class AmazonConfigurer : ExtensionConfigurerBase
     {
