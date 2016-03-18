@@ -60,12 +60,25 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
             }
 
             this.LogInformation("Uploading to {0}...", this.BucketName + Util.ConcatNE("/", this.KeyPrefix));
-            this.ExecuteRemoteCommand("upload");
+
+            var cfg = (AmazonConfigurer)this.GetExtensionConfigurer();
+            if (string.IsNullOrEmpty(cfg.AccessKeyId) || string.IsNullOrEmpty(cfg.SecretAccessKey))
+            {
+                this.LogError("Amazon Web Services access key and secret access key have not been specified.");
+                return;
+            }
+
+            this.ExecuteRemoteCommand("upload", cfg.AccessKeyId, cfg.SecretAccessKey, cfg.S3PartSize.ToString(), cfg.RegionEndpoint);
         }
         protected override string ProcessRemoteCommand(string name, string[] args)
         {
             if (name != "upload")
                 throw new ArgumentException("Invalid command.");
+
+            var accessKeyId = args[0];
+            var secretAccessKey = args[1];
+            int partSize = int.Parse(args[2]);
+            var regionEndpoint = args[3];
 
             var entryResults = Util.Files.GetDirectoryEntry(
                 new GetDirectoryEntryCommand
@@ -91,26 +104,21 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
             this.LogDebug("Mask matched {0} file(s).", matches.Count);
 
             this.LogInformation("Contacting Amazon S3 Service...");
-            var cfg = (AmazonConfigurer)this.GetExtensionConfigurer();
-            if (string.IsNullOrEmpty(cfg.AccessKeyId) || string.IsNullOrEmpty(cfg.SecretAccessKey))
-            {
-                this.LogError("Amazon Web Services access key and secret access key have not been specified.");
-                return string.Empty;
-            }
 
             var prefix = string.Empty;
             if (!string.IsNullOrEmpty(this.KeyPrefix))
                 prefix = this.KeyPrefix.Trim('/') + "/";
 
-            using (var s3 = new AmazonS3Client(cfg.AccessKeyId, cfg.SecretAccessKey, global::Amazon.RegionEndpoint.GetBySystemName(cfg.RegionEndpoint)))
+            using (var s3 = new AmazonS3Client(accessKeyId, secretAccessKey, global::Amazon.RegionEndpoint.GetBySystemName(regionEndpoint)))
             {
                 var uploader = new S3Uploader(
                     s3,
                     this.BucketName,
                     this.ReducedRedundancy ? S3StorageClass.ReducedRedundancy : S3StorageClass.Standard,
-                    cfg.S3PartSize * 1024 * 1024,
+                    partSize * 1024 * 1024,
                     this.MakePublic,
-                    this.Encrypted);
+                    this.Encrypted
+                );
 
                 foreach (var fileInfo in matches)
                 {
