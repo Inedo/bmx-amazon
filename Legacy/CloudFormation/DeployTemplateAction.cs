@@ -135,8 +135,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
             this.LogInformation("CloudFormation TemplateText is empty, looking for a config file");
             if (!string.IsNullOrEmpty(this.TemplateFile))
             {
-                var configInfo = StoredProcs.ConfigurationFiles_GetConfigurationFiles(Application_Id: this.Context.ApplicationId, Deployable_Id: null, IncludeInstances_Indicator: Domains.YN.Yes)
-                    .Execute();
+                var configInfo = DB.ConfigurationFiles_GetConfigurationFiles(Application_Id: this.Context.ApplicationId, Deployable_Id: null, IncludeInstances_Indicator: Domains.YN.Yes);
 
                 var configFiles = from file in configInfo.ConfigurationFiles_Extended
                                   let matchesDeployable = file.Deployable_Id == this.Context.DeployableId
