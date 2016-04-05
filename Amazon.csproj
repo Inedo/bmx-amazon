@@ -80,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Legacy\ActionImporters\UploadToS3Importer.cs" />
     <Compile Include="Legacy\AmazonConfigurer.cs" />
     <Compile Include="Legacy\AmazonConfigurerEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -101,6 +102,7 @@
     <Compile Include="Legacy\EC2\CreateEC2InstanceActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Operations\S3\UploadFilesToS3Operation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Legacy\EC2\TerminateEC2InstanceAction.cs" />
     <Compile Include="Legacy\EC2\TerminateEC2InstanceActionEditor.cs">
@@ -123,9 +125,7 @@
     <Analyzer Include="packages\AWSSDK.EC2.3.1.9.1\analyzers\dotnet\cs\AWSSDK.EC2.CodeAnalysis.dll" />
     <Analyzer Include="packages\AWSSDK.S3.3.1.3.11\analyzers\dotnet\cs\AWSSDK.S3.CodeAnalysis.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Operations\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if exist $(SolutionDir) cmd /c "del $(SolutionDir)..\..\BuildMaster\ExtensionLib\$(TargetName).bmx"
