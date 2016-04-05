@@ -6,6 +6,7 @@ using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Amazon
 {
+    [SlimSerializable]
     [CustomEditor(typeof(AmazonConfigurerEditor))]
     public sealed class AmazonConfigurer : ExtensionConfigurerBase
     {

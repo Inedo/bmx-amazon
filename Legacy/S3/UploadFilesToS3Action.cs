@@ -19,7 +19,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
     [CustomEditor(typeof(UploadFilesToS3ActionEditor))]
     [Tag("amazon"), Tag("cloud")]
     [ConvertibleToOperation(typeof(UploadToS3Importer))]
-    public sealed class UploadFilesToS3Action : RemoteActionBase
+    public sealed class UploadFilesToS3Action : AgentBasedActionBase
     {
         [Persistent]
         public string[] FileMasks { get; set; }
@@ -69,10 +69,10 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
                 this.LogError("Amazon Web Services access key and secret access key have not been specified.");
                 return;
             }
-
-            this.ExecuteRemoteCommand("upload", cfg.AccessKeyId, cfg.SecretAccessKey, cfg.S3PartSize.ToString(), cfg.RegionEndpoint);
+            
+            this.ProcessRemoteCommand("upload", cfg.AccessKeyId, cfg.SecretAccessKey, cfg.S3PartSize.ToString(), cfg.RegionEndpoint);
         }
-        protected override string ProcessRemoteCommand(string name, string[] args)
+        private string ProcessRemoteCommand(string name, params string[] args)
         {
             if (name != "upload")
                 throw new ArgumentException("Invalid command.");
