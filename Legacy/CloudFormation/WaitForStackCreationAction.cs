@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel;
 using Amazon.CloudFormation;
-using Inedo.BuildMaster;
-using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Web;
+using Inedo.Documentation;
 using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation

@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Inedo.BuildMaster;
-using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Extensibility;
 using Inedo.BuildMaster.Extensibility.Agents;
 using Inedo.BuildMaster.Extensibility.Operations;
 using Inedo.Diagnostics;
+using Inedo.Documentation;
 using Inedo.IO;
 
 namespace Inedo.BuildMasterExtensions.Amazon.Operations.S3
@@ -119,7 +119,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.Operations.S3
                 foreach (var file in files)
                 {
                     var keyName = prefix + file.FullName.Substring(sourceDirectory.Length).Replace(Path.DirectorySeparatorChar, '/').Trim('/');
-                    this.LogInformation($"Transferring {file.FullName} to {keyName} ({FormatSize(file.Size)})...");
+                    this.LogInformation($"Transferring {file.FullName} to {keyName} ({AH.FormatSize(file.Size)})...");
                     using (var fileStream = fileOps.OpenFile(file.FullName, FileMode.Open, FileAccess.Read))
                     {
                         if (file.Size < this.PartSize * 2)
@@ -140,7 +140,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.Operations.S3
 
             long remaining = Math.Max(total - uploaded, 0);
             if (remaining > 0)
-                return new OperationProgress((int)(100.0 * uploaded / total), FormatSize(remaining) + " remaining");
+                return new OperationProgress((int)(100.0 * uploaded / total), AH.FormatSize(remaining) + " remaining");
             else
                 return new OperationProgress(100);
         }
@@ -259,21 +259,6 @@ namespace Inedo.BuildMasterExtensions.Amazon.Operations.S3
             parts.Add(new PartInfo { StartOffset = (wholeParts - 1) * this.PartSize, Length = this.PartSize + remainder });
 
             return parts;
-        }
-        private static string FormatSize(long size)
-        {
-            if (size < 1024L)
-                return size.ToString("G") + " b";
-
-            double s = size;
-
-            if (size < 10L * 1024 * 1024)
-                return (s / 1024.0).ToString("##,#") + " KB";
-
-            if (size < 10L * 1024 * 1024 * 1024)
-                return (s / (1024.0 * 1024.0)).ToString("##,#.#") + " MB";
-
-            return (s / (1024.0 * 1024.0 * 1024.0)).ToString("##,#.##") + " GB";
         }
         private AmazonS3Client CreateClient()
         {

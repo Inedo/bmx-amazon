@@ -5,11 +5,11 @@ using System.Linq;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Inedo.BuildMaster;
-using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Files;
 using Inedo.BuildMaster.Web;
 using Inedo.BuildMasterExtensions.Amazon.Legacy.ActionImporters;
+using Inedo.Documentation;
 using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Amazon.S3
