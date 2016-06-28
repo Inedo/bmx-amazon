@@ -90,6 +90,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Credentials\AwsCredentials.cs" />
     <Compile Include="Legacy\ActionImporters\UploadToS3Importer.cs" />
     <Compile Include="Legacy\AmazonConfigurer.cs" />
     <Compile Include="Legacy\AmazonConfigurerEditor.cs">
