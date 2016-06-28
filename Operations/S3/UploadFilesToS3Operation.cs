@@ -10,7 +10,9 @@ using Amazon.S3.Model;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility;
 using Inedo.BuildMaster.Extensibility.Agents;
+using Inedo.BuildMaster.Extensibility.Credentials;
 using Inedo.BuildMaster.Extensibility.Operations;
+using Inedo.BuildMasterExtensions.Amazon.Credentials;
 using Inedo.Diagnostics;
 using Inedo.Documentation;
 using Inedo.IO;
@@ -22,17 +24,18 @@ namespace Inedo.BuildMasterExtensions.Amazon.Operations.S3
     [Description("Transfers files to an Amazon S3 bucket.")]
     [ScriptNamespace("AWS")]
     [Tag("amazon"), Tag("cloud")]
-    public sealed class UploadFilesToS3Operation : ExecuteOperation
+    public sealed class UploadFilesToS3Operation : ExecuteOperation, IHasCredentials<AwsCredentials>
     {
         private long totalUploadBytes;
         private long uploadedBytes;
 
         [ScriptAlias("From")]
         [DisplayName("Source directory")]
-        [Description(CommonDescriptions.SourceDirectory)]
+        [PlaceholderText("$WorkingDirectory")]
         public string SourceDirectory { get; set; }
         [ScriptAlias("Include")]
         [DisplayName("Include")]
+        [DefaultValue("*")]
         [Description(CommonDescriptions.IncludeMask)]
         public IEnumerable<string> Includes { get; set; }
         [ScriptAlias("Exclude")]
@@ -47,7 +50,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.Operations.S3
         public string BucketName { get; set; }
         [ScriptAlias("To")]
         [DisplayName("Target folder")]
-        [Description("The directory in the specified S3 bucket that will received the uploaded files.")]
+        [Description("The directory in the specified S3 bucket that will receive the uploaded files.")]
         public string KeyPrefix { get; set; }
         [ScriptAlias("ReducedRedundancy")]
         [DisplayName("Use reduced redundancy")]
@@ -64,13 +67,19 @@ namespace Inedo.BuildMasterExtensions.Amazon.Operations.S3
         [Category("Storage")]
         public bool Encrypted { get; set; }
 
-        [Required]
+
+        [ScriptAlias("Credentials")]
+        [DisplayName("Credentials")]
+        public string CredentialName { get; set; }
         [ScriptAlias("AccessKey")]
         [DisplayName("Access key")]
-        public string AccessKey { get; set; }
-        [Required]
+        [PlaceholderText("Use credentials")]
+        [MappedCredential(nameof(AwsCredentials.AccessKeyId))]
+        public string AccessKey { get; set; }        
         [ScriptAlias("SecretAccessKey")]
         [DisplayName("Secret access key")]
+        [PlaceholderText("Use credentials")]
+        [MappedCredential(nameof(AwsCredentials.SecretAccessKey))]
         public string SecretAccessKey { get; set; }
 
         [Category("Network")]
@@ -86,7 +95,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.Operations.S3
 
         private S3CannedACL CannedACL => this.MakePublic ? S3CannedACL.PublicRead : S3CannedACL.NoACL;
         private ServerSideEncryptionMethod EncryptionMethod => this.Encrypted ? ServerSideEncryptionMethod.AES256 : ServerSideEncryptionMethod.None;
-        private S3StorageClass StorageClass => this.ReducedRedundancy ? S3StorageClass.ReducedRedundancy : S3StorageClass.Standard;
+        private S3StorageClass StorageClass => this.ReducedRedundancy ? S3StorageClass.ReducedRedundancy : S3StorageClass.Standard;        
 
         public override async Task ExecuteAsync(IOperationExecutionContext context)
         {
