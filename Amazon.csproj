@@ -58,22 +58,27 @@
       <HintPath>packages\AWSSDK.S3.3.1.3.11\lib\net45\AWSSDK.S3.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="BuildMaster.Web.Controls, Version=5.1.0.1, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
+    <Reference Include="BuildMaster.Web.Controls, Version=5.1.0.7, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
       <HintPath>packages\Inedo.BuildMaster.SDK.5.1\lib\net45\BuildMaster.Web.Controls.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="BuildMasterCore, Version=5.1.0.1, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
+    <Reference Include="BuildMasterCore, Version=5.1.0.7, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
       <HintPath>packages\Inedo.BuildMaster.SDK.5.1\lib\net45\BuildMasterCore.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Inedo.ExecutionEngine, Version=30.1.0.0, Culture=neutral, PublicKeyToken=68703f0e52007e75, processorArchitecture=MSIL">
+    <Reference Include="Inedo.Agents.Client, Version=397.1.0.0, Culture=neutral, PublicKeyToken=9de986a2f8db80fc, processorArchitecture=MSIL">
+      <HintPath>packages\Inedo.BuildMaster.SDK.5.1\lib\net45\Inedo.Agents.Client.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Inedo.ExecutionEngine, Version=33.1.0.0, Culture=neutral, PublicKeyToken=68703f0e52007e75, processorArchitecture=MSIL">
       <HintPath>packages\Inedo.BuildMaster.SDK.5.1\lib\net45\Inedo.ExecutionEngine.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="InedoLib, Version=390.1.0.0, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
+    <Reference Include="InedoLib, Version=397.1.0.0, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
       <HintPath>packages\Inedo.BuildMaster.SDK.5.1\lib\net45\InedoLib.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
@@ -85,7 +90,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Credentials\AwsCredentials.cs" />
     <Compile Include="Legacy\ActionImporters\UploadToS3Importer.cs" />
     <Compile Include="Legacy\AmazonConfigurer.cs" />
     <Compile Include="Legacy\AmazonConfigurerEditor.cs">
