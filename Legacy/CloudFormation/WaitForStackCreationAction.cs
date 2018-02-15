@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 using Amazon.CloudFormation;
-using Inedo.BuildMaster.Web;
 using Inedo.Documentation;
 using Inedo.Serialization;
+using Inedo.Web;
 
 namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
@@ -10,6 +10,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
     [Description("An action that waits for an Amazon CloudFormation stack to complete.")]
     [CustomEditor(typeof(WaitForStackCreationActionEditor))]
     [Tag("amazon"), Tag("cloud")]
+    [PersistFrom("Inedo.BuildMasterExtensions.Amazon.CloudFormation.WaitForStackCreationAction,Amazon")]
     public sealed class WaitForStackCreationAction : CloudFormationActionBase 
     {
         [Persistent]

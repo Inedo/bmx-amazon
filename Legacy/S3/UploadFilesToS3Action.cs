@@ -7,10 +7,9 @@ using Amazon.S3.Model;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Files;
-using Inedo.BuildMaster.Web;
-using Inedo.BuildMasterExtensions.Amazon.Legacy.ActionImporters;
 using Inedo.Documentation;
 using Inedo.Serialization;
+using Inedo.Web;
 
 namespace Inedo.BuildMasterExtensions.Amazon.S3
 {
@@ -18,7 +17,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.S3
     [Description("Transfers files to an Amazon S3 bucket.")]
     [CustomEditor(typeof(UploadFilesToS3ActionEditor))]
     [Tag("amazon"), Tag("cloud")]
-    [ConvertibleToOperation(typeof(UploadToS3Importer))]
+    [PersistFrom("Inedo.BuildMasterExtensions.Amazon.S3.UploadFilesToS3Action,Amazon")]
     public sealed class UploadFilesToS3Action : AgentBasedActionBase
     {
         [Persistent]

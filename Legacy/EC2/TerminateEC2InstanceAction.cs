@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using Inedo.BuildMaster.Extensibility.Actions;
-using Inedo.BuildMaster.Web;
 using Inedo.Documentation;
 using Inedo.Serialization;
+using Inedo.Web;
 
 namespace Inedo.BuildMasterExtensions.Amazon.EC2
 {
@@ -12,6 +12,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
     [Description("Terminates an Amazon EC2 instance at the specified IP Address.")]
     [Tag("amazon"), Tag("cloud")]
     [CustomEditor(typeof(TerminateEC2InstanceActionEditor))]
+    [PersistFrom("Inedo.BuildMasterExtensions.Amazon.EC2.TerminateEC2InstanceAction,Amazon")]
     public sealed class TerminateEC2InstanceAction : ActionBase
     {
         [Persistent]

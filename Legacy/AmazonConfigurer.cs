@@ -1,6 +1,6 @@
 ﻿using Inedo.BuildMaster.Extensibility.Configurers.Extension;
-using Inedo.BuildMaster.Web;
 using Inedo.Serialization;
+using Inedo.Web;
 
 [assembly: ExtensionConfigurer(typeof(Inedo.BuildMasterExtensions.Amazon.AmazonConfigurer))]
 
@@ -8,6 +8,7 @@ namespace Inedo.BuildMasterExtensions.Amazon
 {
     [SlimSerializable]
     [CustomEditor(typeof(AmazonConfigurerEditor))]
+    [PersistFrom("Inedo.BuildMasterExtensions.Amazon.AmazonConfigurer,Amazon")]
     public sealed class AmazonConfigurer : ExtensionConfigurerBase
     {
         [Persistent]

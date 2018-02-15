@@ -7,9 +7,9 @@ using Amazon.CloudFormation;
 using Amazon.CloudFormation.Model;
 using Inedo.BuildMaster.ConfigurationFiles;
 using Inedo.BuildMaster.Data;
-using Inedo.BuildMaster.Web;
 using Inedo.Documentation;
 using Inedo.Serialization;
+using Inedo.Web;
 
 namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
 {
@@ -17,6 +17,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.CloudFormation
     [Description("An action that deploys an Amazon CloudFormation template.")]
     [CustomEditor(typeof(DeployTemplateActionEditor))]
     [Tag("amazon"), Tag("cloud")]
+    [PersistFrom("Inedo.BuildMasterExtensions.Amazon.CloudFormation.DeployTemplateAction,Amazon")]
     public sealed class DeployTemplateAction : CloudFormationActionBase
     {
         [Persistent]

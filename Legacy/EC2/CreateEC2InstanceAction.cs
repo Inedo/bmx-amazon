@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using Inedo.BuildMaster.Extensibility.Actions;
-using Inedo.BuildMaster.Web;
 using Inedo.Documentation;
 using Inedo.Serialization;
+using Inedo.Web;
 
 namespace Inedo.BuildMasterExtensions.Amazon.EC2
 {
@@ -11,6 +11,7 @@ namespace Inedo.BuildMasterExtensions.Amazon.EC2
     [Description("Launches an Amazon EC2 instance using the specified AMI.")]
     [CustomEditor(typeof(CreateEC2InstanceActionEditor))]
     [Tag("amazon"), Tag("cloud")]
+    [PersistFrom("Inedo.BuildMasterExtensions.Amazon.EC2.CreateEC2InstanceAction,Amazon")]
     public sealed class CreateEC2InstanceAction : ActionBase
     {
         [Persistent]
