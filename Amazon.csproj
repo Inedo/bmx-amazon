@@ -102,36 +102,36 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Legacy\AmazonConfigurer.cs" />
-    <Compile Include="Legacy\AmazonConfigurerEditor.cs">
+    <Compile Include="AmazonConfigurer.cs" />
+    <Compile Include="AmazonConfigurerEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Legacy\CloudFormation\DeleteStackAction.cs" />
-    <Compile Include="Legacy\CloudFormation\DeleteStackActionEditor.cs">
+    <Compile Include="CloudFormation\DeleteStackAction.cs" />
+    <Compile Include="CloudFormation\DeleteStackActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Legacy\CloudFormation\DeployTemplateAction.cs" />
-    <Compile Include="Legacy\CloudFormation\DeployTemplateActionEditor.cs">
+    <Compile Include="CloudFormation\DeployTemplateAction.cs" />
+    <Compile Include="CloudFormation\DeployTemplateActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Legacy\CloudFormation\WaitForStackCreationAction.cs" />
-    <Compile Include="Legacy\CloudFormation\WaitForStackCreationActionEditor.cs">
+    <Compile Include="CloudFormation\WaitForStackCreationAction.cs" />
+    <Compile Include="CloudFormation\WaitForStackCreationActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Legacy\CloudFormation\CloudFormationActionBase.cs" />
-    <Compile Include="Legacy\EC2\CreateEC2InstanceAction.cs" />
-    <Compile Include="Legacy\EC2\CreateEC2InstanceActionEditor.cs">
+    <Compile Include="CloudFormation\CloudFormationActionBase.cs" />
+    <Compile Include="EC2\CreateEC2InstanceAction.cs" />
+    <Compile Include="EC2\CreateEC2InstanceActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Legacy\EC2\TerminateEC2InstanceAction.cs" />
-    <Compile Include="Legacy\EC2\TerminateEC2InstanceActionEditor.cs">
+    <Compile Include="EC2\TerminateEC2InstanceAction.cs" />
+    <Compile Include="EC2\TerminateEC2InstanceActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Legacy\S3\S3Uploader.cs" />
-    <Compile Include="Legacy\S3\S3UploadProgress.cs" />
-    <Compile Include="Legacy\S3\UploadFilesToS3Action.cs" />
-    <Compile Include="Legacy\S3\UploadFilesToS3ActionEditor.cs">
+    <Compile Include="S3\S3Uploader.cs" />
+    <Compile Include="S3\S3UploadProgress.cs" />
+    <Compile Include="S3\UploadFilesToS3Action.cs" />
+    <Compile Include="S3\UploadFilesToS3ActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
   </ItemGroup>
